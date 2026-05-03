@@ -1,0 +1,78 @@
+.mentor-ack-page {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #f4ece4;
+}
+
+.mentor-ack-card {
+  width: min(92vw, 920px);
+  transform: translateY(-22px);
+  padding: 34px 30px 24px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #d8c2b2;
+  box-shadow: 0 16px 30px rgba(94, 11, 33, 0.28);
+  text-align: left;
+}
+
+.mentor-ack-card h1 {
+  margin-bottom: 18px;
+  color: #000000;
+  font-size: 36px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.mentor-ack-card p {
+  color: #000000;
+  font-size: 17px;
+  line-height: 1.58;
+  margin-bottom: 12px;
+}
+
+.mentor-ack-actions {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mentor-ack-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: #000000;
+}
+
+.mentor-ack-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #7f0f1f;
+}
+
+.mentor-ack-btn {
+  width: 118px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: #7f0f1f;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.mentor-ack-btn:hover {
+  background: #9b1a32;
+  transform: translateY(-1px);
+}
+
+.mentor-ack-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}

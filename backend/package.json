@@ -1,0 +1,19 @@
+{
+  "name": "login-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mongoose": "^8.18.0",
+    "multer": "^2.1.1",
+    "nodemailer": "^8.0.7",
+    "razorpay": "^2.9.6"
+  }
+}

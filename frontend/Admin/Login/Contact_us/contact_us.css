@@ -1,0 +1,147 @@
+@import url("https://fonts.googleapis.com/css2?family=Cookie&display=swap");
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+.mentor-about-page {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 12px 28px 28px;
+  background: #f8f4ef;
+  color: #1a1a1a;
+}
+
+.mentor-home-topbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mentor-home-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #121212;
+  white-space: nowrap;
+}
+
+.mentor-home-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 24px;
+  background: #000000;
+  border-radius: 8px;
+  padding: 4px 14px;
+}
+
+.mentor-nav-item {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 2px 8px;
+  position: relative;
+}
+
+.mentor-nav-item:hover::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: rgb(93, 28, 106);
+}
+
+.contact-container {
+  text-align: center;
+  margin-top: 40px;
+  padding: 0 20px;
+}
+
+.contact-heading {
+  font-family: 'Cookie', cursive;
+  color: #7b2cbf;
+  font-size: 66px;
+  font-weight: normal;
+  margin-bottom: 20px;
+}
+
+.contact-text {
+  font-size: 16px;
+  color: black;
+  line-height: 1.5;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.contact-team-card {
+  width: 100%;
+  height: 615px;
+  border: 2px solid #b04a5a;
+  transform: translateY(-20px);
+  box-shadow: 0 15px 35px rgba(123, 44, 191, 0.7);
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 40px;
+  box-sizing: border-box;
+  margin: 40px auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1200px;
+}
+
+.contact-team-card h3 {
+  font-family: 'Cookie', cursive;
+  font-size: 56px;
+  color: #7b2cbf;
+  margin-top: 0;
+  margin-bottom: 40px;
+}
+
+.team-member {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.team-member h4 {
+  font-size: 22px;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.team-member p {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+  font-style: italic;
+}
+
+.team-email {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 15px;
+  color: #7b2cbf;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.team-email:hover {
+  color: #5d1c6a;
+  text-decoration: underline;
+}

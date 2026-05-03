@@ -1,0 +1,136 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #e5e5e5;
+  font-family: 'Inter', sans-serif;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.new-admin-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-card {
+  width: 520px;
+  height: auto;
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  position: relative;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-branding {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  font-weight: 800;
+  color: black;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.card-heading {
+  font-family: 'Pacifico', cursive;
+  font-size: 2.2rem;
+  margin-top: 20px;
+  margin-bottom: 25px;
+  background: linear-gradient(45deg, #85182a, #db2777);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.admin-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-form input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.admin-form input:hover, .admin-form input:focus {
+  border-color: #85182a;
+  box-shadow: 0 0 0 3px rgba(133, 24, 42, 0.1);
+}
+
+.password-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+}
+
+.eye-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.create-btn {
+  margin-top: 10px;
+  padding: 12px;
+  border: 2px solid #85182a;
+  border-radius: 8px;
+  background: white;
+  color: #85182a;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.create-btn:hover {
+  background: #85182a;
+  color: white;
+}
+
+.back-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 12px 25px;
+  background-color: #1e293b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.back-btn:hover {
+  background-color: #334155;
+  transform: translateY(-2px);
+}
+

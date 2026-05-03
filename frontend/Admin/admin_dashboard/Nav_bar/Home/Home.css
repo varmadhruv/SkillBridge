@@ -1,0 +1,187 @@
+.admin-home-container {
+  padding: 2rem;
+  background-color: #f4f4f4;
+  min-height: calc(100vh - 65px);
+}
+
+.home-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.home-loading, .home-error, .no-mentors {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #4b5563;
+  margin-top: 3rem;
+}
+
+.home-error {
+  color: #ef4444;
+}
+
+.mentors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.mentor-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.mentor-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.mentor-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 1rem;
+}
+
+.mentor-photo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e5e7eb;
+}
+
+.mentor-info h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.status-locked-msg {
+  width: 100%;
+  padding: 10px;
+  background-color: #f1f5f9;
+  border-radius: 8px;
+  color: #475569;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px dashed #cbd5e1;
+}
+
+.status-locked-msg strong {
+  color: #1e293b;
+  text-transform: uppercase;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.status-verified {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.status-unverified {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.status-loggedout {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+}
+
+.status-banned {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.mentor-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex: 1;
+}
+
+.mentor-details p {
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.mentor-details strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.mentor-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.action-btn {
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.btn-verify {
+  background-color: #10b981;
+}
+.btn-verify:hover {
+  background-color: #059669;
+}
+
+.btn-unverify {
+  background-color: #6b7280;
+}
+.btn-unverify:hover {
+  background-color: #4b5563;
+}
+
+.btn-logout {
+  background-color: #6366f1;
+}
+.btn-logout:hover {
+  background-color: #4f46e5;
+}
+
+.btn-banned {
+  background-color: #ef4444;
+}
+.btn-banned:hover {
+  background-color: #dc2626;
+}
