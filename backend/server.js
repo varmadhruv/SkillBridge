@@ -25,10 +25,13 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const httpsOptions = {
-  key: fs.readFileSync(path.join(__dirname, "key.pem")),
-  cert: fs.readFileSync(path.join(__dirname, "cert.pem")),
-};
+// HTTPS options are only used for local development; Render handles TLS termination itself.
+const httpsOptions = (fs.existsSync(path.join(__dirname, "key.pem")) && fs.existsSync(path.join(__dirname, "cert.pem")))
+  ? {
+      key: fs.readFileSync(path.join(__dirname, "key.pem")),
+      cert: fs.readFileSync(path.join(__dirname, "cert.pem")),
+    }
+  : null;
 
 const razorpay = new Razorpay({
   key_id: "rzp_test_SjXEqbILXUgWv2",
@@ -2035,6 +2038,17 @@ app.post("/reset-dev-password", async (request, response) => {
   }
 });
 
+// --- Serve Vite Frontend Build (Production) ---
+const frontendDist = path.join(__dirname, "..", "frontend", "dist");
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+
+  // Catch-all: for any route not matched by an API, serve the frontend's index.html
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(frontendDist, "index.html"));
+  });
+}
+
 app.listen(PORT, () => {
-  console.log(`Server running on http://127.0.0.1:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
