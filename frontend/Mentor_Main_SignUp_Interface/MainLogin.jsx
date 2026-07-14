@@ -105,7 +105,7 @@ function MainLogin() {
     event.preventDefault();
 
     if (!mentorUsername.trim() || !mentorPassword.trim()) {
-      toast.error("Username aur Password dono bharna zaroori hai.");
+      toast.error("Both Username and Password are required.");
       return;
     }
 
@@ -113,7 +113,7 @@ function MainLogin() {
     try {
       const resolvedId = isValidObjectId(mentorId) ? mentorId : await resolveMentorId(fullName);
       if (!resolvedId) {
-        toast.error("Mentor ID nahi mila. Pehle registration complete karo.");
+        toast.error("Mentor ID not found. Please complete registration first.");
         return;
       }
 
@@ -158,11 +158,11 @@ function MainLogin() {
       }
 
       if (!response.ok) {
-        toast.error(data?.message || "Details save nahi ho paaye.");
+        toast.error(data?.message || "Failed to save details.");
         return;
       }
 
-      toast.success("Username aur password same mentor id me save ho gaye.");
+      toast.success("Username and password saved successfully.");
       window.location.href = "/Mentor_home_page/";
     } catch (_error) {
       toast.error("Server connection issue. Please try again.");

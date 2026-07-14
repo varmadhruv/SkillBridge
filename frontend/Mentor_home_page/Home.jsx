@@ -7,7 +7,6 @@ function Home() {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState(localStorage.getItem("mentorPhotoUrl") || "");
   const [mentorDetails, setMentorDetails] = useState(null);
   const [showUsername, setShowUsername] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showUpdates, setShowUpdates] = useState(false);
@@ -26,8 +25,7 @@ function Home() {
     { label: "Currently Teaching", value: mentorDetails?.currentlyTeaching || "--" },
     { label: "Institute Name", value: mentorDetails?.instituteName || "--" },
     { label: "Description", value: mentorDetails?.description || "--" },
-    { label: "UserName", value: mentorDetails?.mentorUsername || "--" },
-    { label: "Password", value: mentorDetails?.mentorPassword || "--" }
+    { label: "UserName", value: mentorDetails?.mentorUsername || "--" }
   ];
   const firstGroup = detailRows.slice(0, 7);
   const secondGroup = detailRows.slice(7);
@@ -39,8 +37,7 @@ function Home() {
 
   const renderDetailRow = (item) => {
     const isUsernameField = item.label === "UserName";
-    const isPasswordField = item.label === "Password";
-    const shouldMask = (isUsernameField && !showUsername) || (isPasswordField && !showPassword);
+    const shouldMask = isUsernameField && !showUsername;
     const displayValue = shouldMask ? maskValue(item.value) : item.value;
 
     return (
@@ -49,11 +46,6 @@ function Home() {
         {isUsernameField ? (
           <button type="button" className="mentor-eye-btn" onClick={() => setShowUsername((prev) => !prev)}>
             {showUsername ? "Hide" : "Show"}
-          </button>
-        ) : null}
-        {isPasswordField ? (
-          <button type="button" className="mentor-eye-btn" onClick={() => setShowPassword((prev) => !prev)}>
-            {showPassword ? "Hide" : "Show"}
           </button>
         ) : null}
       </p>
@@ -254,9 +246,9 @@ function Home() {
 
         <section className="mentor-sessions-section" style={{ marginTop: "30px", background: "#fff", padding: "20px", borderRadius: "10px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}>
           <h2 className="mentor-home-dashboard-title" style={{ marginBottom: "15px", borderBottom: "2px solid #6366f1", paddingBottom: "10px", color: "#333" }}>Upcoming Sessions</h2>
-          {sessions.length > 0 ? (
+          {sessions.filter(s => s.paymentStatus !== 'Paid').length > 0 ? (
             <div className="sessions-list" style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-              {sessions.map((session, index) => (
+              {sessions.filter(s => s.paymentStatus !== 'Paid').map((session, index) => (
                 <div key={index} className="session-card" style={{ padding: "15px", border: "1px solid #e0e0e0", borderRadius: "8px", background: "#fafafa" }}>
                   <h3 style={{ margin: "0 0 10px 0", color: "#6366f1" }}>Session with {session.studentName}</h3>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -275,6 +267,34 @@ function Home() {
             </div>
           ) : (
             <p style={{ color: "#666" }}>No upcoming sessions found.</p>
+          )}
+
+          <hr style={{ margin: "30px 0", border: "none", borderTop: "2px dashed #ddd" }} />
+
+          <h2 className="mentor-home-dashboard-title" style={{ marginBottom: "15px", borderBottom: "2px solid #28a745", paddingBottom: "10px", color: "#333" }}>Successful Sessions</h2>
+          {sessions.filter(s => s.paymentStatus === 'Paid').length > 0 ? (
+            <div className="sessions-list" style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+              {sessions.filter(s => s.paymentStatus === 'Paid').map((session, index) => (
+                <div key={index} className="session-card" style={{ padding: "15px", border: "1px solid #d4edda", borderRadius: "8px", background: "#f9fffb", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <h3 style={{ margin: "0 0 10px 0", color: "#28a745" }}>Completed Session with {session.studentName}</h3>
+                    <p style={{ margin: "5px 0", fontSize: "14px" }}><strong>Date:</strong> {new Date(session.createdAt).toLocaleDateString()}</p>
+                    <p style={{ margin: "5px 0", fontSize: "14px", color: "#155724", fontWeight: "600" }}>Status: Payment Received ✅</p>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontSize: "12px", color: "#666", marginBottom: "5px" }}>Admin Payment Proof</p>
+                    <img 
+                      src={`http://127.0.0.1:5000/mentor-payment-proof/${session._id}`} 
+                      alt="Payment Proof" 
+                      style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "5px", border: "1px solid #28a745", cursor: "pointer" }}
+                      onClick={() => window.open(`http://127.0.0.1:5000/mentor-payment-proof/${session._id}`, '_blank')}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: "#666" }}>No successful sessions recorded yet.</p>
           )}
         </section>
       </section>

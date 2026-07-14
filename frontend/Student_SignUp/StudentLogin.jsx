@@ -115,7 +115,7 @@ function StudentLogin() {
       return;
     }
 
-    if (formData.otp !== expectedOtp) {
+    if (String(formData.otp).trim() !== String(expectedOtp).trim()) {
       toast.error("Invalid OTP! Please check and try again.");
       return;
     }
@@ -126,8 +126,8 @@ function StudentLogin() {
       return;
     }
 
-    if (!/^\d{12}$/.test(formData.universityPRN)) {
-      toast.error("Invalid 12-digit PRN!");
+    if (!/^(\d{12}|\d{14})$/.test(formData.universityPRN)) {
+      toast.error("Invalid PRN! Must be 12 or 14 digits.");
       return;
     }
 
@@ -248,7 +248,7 @@ function StudentLogin() {
         <div className="form-card">
           <h2 className="right-panel-title">Student Information</h2>
           <hr className="welcome-divider" />
-          <form className="student-form" onSubmit={handleSubmit}>
+          <form className="student-form" onSubmit={handleSubmit} noValidate>
             <input name="fullName" type="text" placeholder="Full Name" value={formData.fullName} onChange={handleChange} required />
             <input name="dateOfBirth" type="date" value={formData.dateOfBirth} onChange={handleChange} required />
             
@@ -309,6 +309,7 @@ function StudentLogin() {
                   onChange={handleChange} 
                   required 
                   style={{ flex: 1 }}
+                  readOnly={otpSent}
                 />
                 <button 
                   type="button" 

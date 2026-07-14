@@ -1,3 +1,4 @@
+import "dotenv/config";
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
@@ -12,8 +13,7 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 
 const app = express();
-const PORT = 5000;
-const MONGO_URL = "mongodb://127.0.0.1:27017/LoginPage";
+const PORT = process.env.PORT || 5000;
 
 app.use(cors({
   origin: "*",
@@ -57,12 +57,13 @@ const studentImageUpload = multer({
 });
 
 mongoose
-  .connect(MONGO_URL)
+  .connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("MongoDB connected");
+    console.log("MongoDB Atlas Connected Successfully");
   })
   .catch((error) => {
-    console.error("MongoDB connection failed:", error.message);
+    console.error("MongoDB Atlas connection failed:", error.message);
+    process.exit(1);
   });
 
 const userSchema = new mongoose.Schema({
@@ -128,6 +129,11 @@ const mentorSchema = new mongoose.Schema({
   },
   mentorUsername: String,
   mentorPassword: String,
+  upiId: String,
+  paymentQR: {
+    data: Buffer,
+    contentType: String
+  },
   status: { type: String, default: 'Pending' },
   submittedAt: { type: Date, default: Date.now }
 }, {
@@ -188,6 +194,11 @@ const sessionSchema = new mongoose.Schema({
   mentorName: String,
   joinUrl: String,
   startUrl: String,
+  paymentStatus: { type: String, default: 'Unpaid' },
+  paymentProof: {
+    data: Buffer,
+    contentType: String
+  },
   createdAt: { type: Date, default: Date.now }
 }, {
   collection: "Session_Record",
@@ -747,13 +758,13 @@ app.post("/student-registration", studentImageUpload.single("studentPhoto"), asy
 
     await newStudent.save();
 
-    return response.status(201).json({ message: "Student registration ho gaya successfully! ✅" });
+    return response.status(201).json({ message: "Student registration successful! ✅" });
   } catch (error) {
     console.error("Student registration error:", error);
     if (error.code === 11000) {
       return response.status(409).json({ message: "User Exists" });
     }
-    return response.status(500).json({ message: "Student registration fail ho gaya" });
+    return response.status(500).json({ message: "Student registration failed." });
   }
 });
 
@@ -767,11 +778,11 @@ app.get("/student-photo/:id", async (request, response) => {
     response.set("Content-Type", student.studentPhoto.contentType || "image/jpeg");
     return response.send(student.studentPhoto.data);
   } catch (error) {
-    return response.status(500).json({ message: "Photo fetch fail ho gaya" });
+    return response.status(500).json({ message: "Photo fetch failed." });
   }
 });
 
-app.post("/mentor-registration", studentImageUpload.single("profilePhoto"), async (request, response) => {
+app.post("/mentor-registration", studentImageUpload.fields([{ name: 'profilePhoto', maxCount: 1 }, { name: 'paymentQR', maxCount: 1 }]), async (request, response) => {
   try {
     const getBodyField = (fieldName) => {
       const requestBody = request.body || {};
@@ -801,7 +812,8 @@ app.post("/mentor-registration", studentImageUpload.single("profilePhoto"), asyn
     const studyFromWhere = getBodyField("studyFromWhere");
     const religion = getBodyField("religion");
     const description = getBodyField("description");
-    const profilePhotoName = getBodyField("profilePhotoName") || request.file?.originalname || "";
+    const upiId = getBodyField("upiId");
+    const profilePhotoName = getBodyField("profilePhotoName") || request.files?.['profilePhoto']?.[0]?.originalname || "";
 
     const fields = {
       fullName,
@@ -816,7 +828,8 @@ app.post("/mentor-registration", studentImageUpload.single("profilePhoto"), asyn
       currentlyTeaching,
       highestEducation,
       studyFromWhere,
-      description
+      description,
+      upiId
     };
     const missingField = Object.keys(fields).find((key) => {
       // If currentlyTeaching is "No", instituteName is not required
@@ -826,10 +839,6 @@ app.post("/mentor-registration", studentImageUpload.single("profilePhoto"), asyn
 
     if (missingField) {
       return response.status(400).json({ message: `All fields are required. Missing: ${missingField}` });
-    }
-
-    if (!request.file) {
-      return response.status(400).json({ message: "Profile photo upload karna zaroori hai." });
     }
 
     const existingMentor = await Mentor.findOne({ email, phone });
@@ -853,18 +862,23 @@ app.post("/mentor-registration", studentImageUpload.single("profilePhoto"), asyn
       studyFromWhere,
       description,
       profilePhotoName,
-      profilePhoto: {
-        data: request.file.buffer,
-        contentType: request.file.mimetype
-      }
+      profilePhoto: (request.files && request.files['profilePhoto']) ? {
+        data: request.files['profilePhoto'][0].buffer,
+        contentType: request.files['profilePhoto'][0].mimetype
+      } : undefined,
+      upiId,
+      paymentQR: (request.files && request.files['paymentQR']) ? {
+        data: request.files['paymentQR'][0].buffer,
+        contentType: request.files['paymentQR'][0].mimetype
+      } : undefined
     });
 
     await newMentor.save();
 
     return response.status(201).json({
-      message: "Mentor details save ho gaye successfully! ✅",
+      message: "Mentor details saved successfully! ✅",
       mentorId: newMentor._id,
-      photoUrl: `http://localhost:${PORT}/mentor-photo/${newMentor._id}`
+      photoUrl: `http://127.0.0.1:${PORT}/mentor-photo/${newMentor._id}`
     });
   } catch (error) {
     console.error("Mentor registration error:", error);
@@ -874,10 +888,10 @@ app.post("/mentor-registration", studentImageUpload.single("profilePhoto"), asyn
     }
 
     if (error.message === "Only image files are allowed") {
-      return response.status(400).json({ message: "Sirf image file upload karo." });
+      return response.status(400).json({ message: "Please upload image files only." });
     }
 
-    return response.status(500).json({ message: "Mentor registration fail ho gaya" });
+    return response.status(500).json({ message: "Mentor registration failed." });
   }
 });
 
@@ -891,21 +905,36 @@ app.get("/mentor-photo/:id", async (request, response) => {
     response.set("Content-Type", mentor.profilePhoto.contentType || "image/jpeg");
     return response.send(mentor.profilePhoto.data);
   } catch (error) {
-    return response.status(500).json({ message: "Photo fetch fail ho gaya" });
+    return response.status(500).json({ message: "Photo fetch failed." });
+  }
+});
+
+app.get("/mentor-qr/:id", async (request, response) => {
+  try {
+    const mentor = await Mentor.findById(request.params.id).select("paymentQR");
+    if (!mentor?.paymentQR?.data) {
+      return response.status(404).json({ message: "QR Code not found" });
+    }
+
+    response.set("Content-Type", mentor.paymentQR.contentType || "image/jpeg");
+    return response.send(mentor.paymentQR.data);
+  } catch (error) {
+    return response.status(500).json({ message: "QR fetch fail" });
   }
 });
 
 app.get("/mentor-records", async (_request, response) => {
   try {
-    const mentors = await Mentor.find({}, { profilePhoto: 0 }).sort({ submittedAt: -1 });
+    const mentors = await Mentor.find({}, { profilePhoto: 0, paymentQR: 0 }).sort({ submittedAt: -1 });
     const mentorsWithPhotoUrl = mentors.map((mentor) => ({
       ...mentor.toObject(),
-      photoUrl: `http://localhost:${PORT}/mentor-photo/${mentor._id}`
+      photoUrl: `http://127.0.0.1:${PORT}/mentor-photo/${mentor._id}`,
+      qrUrl: `http://127.0.0.1:${PORT}/mentor-qr/${mentor._id}`
     }));
 
     return response.json({ data: mentorsWithPhotoUrl });
   } catch (error) {
-    return response.status(500).json({ message: "Mentor records fetch fail ho gaya" });
+    return response.status(500).json({ message: "Mentor records fetch failed." });
   }
 });
 
@@ -924,7 +953,7 @@ app.get("/mentor-record/:id", async (request, response) => {
       }
     });
   } catch (error) {
-    return response.status(500).json({ message: "Mentor record fetch fail ho gaya" });
+    return response.status(500).json({ message: "Mentor record fetch failed." });
   }
 });
 
@@ -950,7 +979,7 @@ app.get("/student-record/:id", async (request, response) => {
     });
   } catch (error) {
     console.error("Student record fetch error:", error);
-    return response.status(500).json({ message: "Student record fetch fail ho gaya" });
+    return response.status(500).json({ message: "Student record fetch failed." });
   }
 });
 
@@ -1119,6 +1148,58 @@ app.get("/student-sessions/:studentId", async (req, res) => {
   }
 });
 
+app.get("/all-sessions", async (req, res) => {
+  try {
+    const sessions = await Session.find({}, { "paymentProof.data": 0 }).sort({ createdAt: -1 });
+    res.json({ data: sessions });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching all sessions" });
+  }
+});
+
+app.post("/admin-pay-mentor/:sessionId", studentImageUpload.single("paymentProof"), async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    if (!req.file) {
+      return res.status(400).json({ message: "Payment proof image is required" });
+    }
+
+    const updatedSession = await Session.findByIdAndUpdate(
+      sessionId,
+      {
+        paymentStatus: 'Paid',
+        paymentProof: {
+          data: req.file.buffer,
+          contentType: req.file.mimetype
+        }
+      },
+      { new: true }
+    );
+
+    if (!updatedSession) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+    res.json({ message: "Payment recorded successfully", session: updatedSession });
+  } catch (err) {
+    console.error("Admin pay mentor error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/mentor-payment-proof/:sessionId", async (req, res) => {
+  try {
+    const session = await Session.findById(req.params.sessionId).select("paymentProof");
+    if (!session?.paymentProof?.data) {
+      return res.status(404).json({ message: "Payment proof not found" });
+    }
+    res.set("Content-Type", session.paymentProof.contentType);
+    res.send(session.paymentProof.data);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching payment proof" });
+  }
+});
+
 
 
 app.patch("/mentor-main-login/:id", async (request, response) => {
@@ -1132,7 +1213,7 @@ app.patch("/mentor-main-login/:id", async (request, response) => {
     }
 
     if (!mentorUsername || !mentorPassword) {
-      return response.status(400).json({ message: "Username aur password dono required hain." });
+      return response.status(400).json({ message: "Username and password are both required." });
     }
 
     // Mentor-only uniqueness check
@@ -1160,14 +1241,14 @@ app.patch("/mentor-main-login/:id", async (request, response) => {
     }
 
     return response.json({
-      message: "Username aur password same mentor id me save ho gaye.",
+      message: "Username and password saved successfully for this mentor.",
       data: {
         ...updatedMentor.toObject(),
         photoUrl: `http://localhost:${PORT}/mentor-photo/${updatedMentor._id}`
       }
     });
   } catch (error) {
-    return response.status(500).json({ message: "Mentor login details save nahi ho paaye." });
+    return response.status(500).json({ message: "Failed to save mentor login details." });
   }
 });
 
@@ -1186,7 +1267,7 @@ app.delete("/mentor-record/:id", async (request, response) => {
 
     return response.json({ message: "Deleted Successfully" });
   } catch (error) {
-    return response.status(500).json({ message: "Mentor delete fail ho gaya." });
+    return response.status(500).json({ message: "Mentor deletion failed." });
   }
 });
 
@@ -1496,6 +1577,9 @@ app.post("/admin/mentor-block/:id", async (request, response) => {
     // Delete from original record
     await Mentor.findByIdAndDelete(mentorId);
 
+    // Also delete any reports associated with this mentor name
+    await Report.deleteMany({ mentorName: mentor.fullName });
+
     return response.json({ message: "Mentor blocked and record moved to Block_Record." });
   } catch (error) {
     console.error("Mentor block error:", error);
@@ -1730,6 +1814,23 @@ app.get("/get-reports", async (_request, response) => {
   } catch (error) {
     console.error("Fetch reports error:", error);
     return response.status(500).json({ message: "Failed to fetch reports." });
+  }
+});
+
+app.delete("/admin/report/:id", async (request, response) => {
+  try {
+    const reportId = request.params.id;
+    if (!mongoose.Types.ObjectId.isValid(reportId)) {
+      return response.status(400).json({ message: "Invalid report id." });
+    }
+    const deletedReport = await Report.findByIdAndDelete(reportId);
+    if (!deletedReport) {
+      return response.status(404).json({ message: "Report not found" });
+    }
+    return response.json({ message: "Report deleted successfully" });
+  } catch (error) {
+    console.error("Delete report error:", error);
+    return response.status(500).json({ message: "Failed to delete report" });
   }
 });
 

@@ -33,8 +33,9 @@ function Login() {
         toast.success("Login Successful!");
         localStorage.setItem("tempOtp", data.otp);
         localStorage.setItem("tempEmail", data.email);
+        localStorage.setItem("fullName", data.fullName);
         setTimeout(() => {
-          window.location.href = '/Developer/dev_home/index.html';
+          window.location.href = '/Developer/dev_otp_authentication/index.html';
         }, 1500);
       } else {
         toast.error(data.message || "Invalid credentials");

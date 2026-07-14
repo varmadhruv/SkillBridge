@@ -76,7 +76,7 @@ function Otp_Auth() {
     const enteredOtp = otp.join('');
     const expectedOtp = localStorage.getItem('tempOtp');
 
-    if (enteredOtp === expectedOtp) {
+    if (String(enteredOtp).trim() === String(expectedOtp).trim()) {
       localStorage.removeItem('tempOtp');
       window.location.href = '/Mentor_home_page/index.html';
     } else {

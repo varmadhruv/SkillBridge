@@ -14,7 +14,9 @@ function Home_Section() {
       .then((res) => res.json())
       .then((data) => {
         if (data.data) {
-          setMentors(data.data);
+          // Only show mentors that are verified by admin
+          const verifiedMentors = data.data.filter(mentor => mentor.status === 'Verified');
+          setMentors(verifiedMentors);
         }
       })
       .catch((err) => console.error("Error fetching mentors:", err));

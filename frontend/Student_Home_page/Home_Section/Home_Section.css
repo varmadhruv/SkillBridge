@@ -164,8 +164,9 @@
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
-  padding-top: 20px;
+  padding-top: 15px;
   border-top: 1px solid #f0f0f0;
+  gap: 10px;
 }
 
 .checkout-btn {
@@ -187,9 +188,9 @@
 
 .status-badge-container {
   display: flex;
-  justify-content: space-between;
+  gap: 8px;
   align-items: center;
-  width: 100%;
+  margin-left: auto;
 }
 
 

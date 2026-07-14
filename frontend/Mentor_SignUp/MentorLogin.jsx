@@ -25,6 +25,9 @@ function MentorLogin() {
     studyFromWhere: "",
     description: "",
     profilePhoto: null,
+    upiId: "",
+    paymentQR: null,
+    termsAccepted: false,
     otp: ""
   });
   const [expectedOtp, setExpectedOtp] = useState(null);
@@ -40,7 +43,7 @@ function MentorLogin() {
 
     setMentorForm((prev) => ({
       ...prev,
-      [name]: name === "profilePhoto" ? selectedFile : value,
+      [name]: (name === "profilePhoto" || name === "paymentQR") ? selectedFile : (name === "termsAccepted" ? event.target.checked : value),
       // Clear institute name if teaching is No
       instituteName: name === "currentlyTeaching" && value === "No" ? "" : (name === "instituteName" ? value : prev.instituteName)
     }));
@@ -63,6 +66,9 @@ function MentorLogin() {
       studyFromWhere: "",
       description: "",
       profilePhoto: null,
+      upiId: "",
+      paymentQR: null,
+      termsAccepted: false,
       otp: ""
     });
     setOtpSent(false);
@@ -102,10 +108,25 @@ function MentorLogin() {
     formData.set("highestEducation", getFieldValue("highestEducation"));
     formData.set("studyFromWhere", getFieldValue("studyFromWhere"));
     formData.set("description", getFieldValue("description"));
+    formData.set("upiId", getFieldValue("upiId"));
 
     const selectedPhoto = formData.get("profilePhoto");
-    if (selectedPhoto instanceof File && selectedPhoto.name) {
-      formData.set("profilePhotoName", selectedPhoto.name);
+    if (!selectedPhoto || !(selectedPhoto instanceof File) || !selectedPhoto.name) {
+      toast.error("Profile photo is required!");
+      return;
+    }
+    formData.set("profilePhotoName", selectedPhoto.name);
+
+    const selectedQR = formData.get("paymentQR");
+    if (!selectedQR || !(selectedQR instanceof File) || !selectedQR.name) {
+      toast.error("Payment QR code is required!");
+      return;
+    }
+
+    // T&C Verification
+    if (!mentorForm.termsAccepted) {
+      toast.error("Please accept the Terms & Conditions regarding payment details.");
+      return;
     }
 
     // OTP Verification
@@ -114,7 +135,7 @@ function MentorLogin() {
       return;
     }
 
-    if (mentorForm.otp !== expectedOtp) {
+    if (String(mentorForm.otp).trim() !== String(expectedOtp).trim()) {
       toast.error("Invalid OTP! Please check and try again.");
       return;
     }
@@ -295,7 +316,7 @@ function MentorLogin() {
             {showRightCursor ? <span className="mentor-typing-cursor">|</span> : null}
           </h2>
           <hr className="mentor-heading-divider" />
-          <form className="mentor-form" onSubmit={handleSubmit}>
+          <form className="mentor-form" onSubmit={handleSubmit} noValidate>
             <input name="fullName" type="text" placeholder="Full Name" value={mentorForm.fullName} onChange={handleChange} required />
             <input name="dob" type="date" value={mentorForm.dob} onChange={handleChange} required />
 
@@ -322,6 +343,7 @@ function MentorLogin() {
                   onChange={handleChange} 
                   required 
                   style={{ flex: 1 }}
+                  readOnly={otpSent}
                 />
                 <button 
                   type="button" 
@@ -465,6 +487,42 @@ function MentorLogin() {
                 required
               />
               {previewUrl ? <img src={previewUrl} alt="Preview" className="mentor-preview-image" /> : null}
+            </div>
+
+            <input 
+              name="upiId" 
+              type="text" 
+              placeholder="UPI ID (e.g. name@upi)" 
+              value={mentorForm.upiId} 
+              onChange={handleChange} 
+              required 
+            />
+            <div className="qr-upload" style={{ gridColumn: "1 / -1", display: "flex", flexDirection: "column", gap: "10px", marginTop: "5px" }}>
+              <label style={{ fontSize: "14px", fontWeight: "600", color: "rgb(37, 52, 63)" }}>Payment QR Code</label>
+              <input
+                name="paymentQR"
+                type="file"
+                accept="image/*"
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="terms-condition-section" style={{ gridColumn: "1 / -1", marginTop: "15px", padding: "15px", border: "1px solid #ffccd5", borderRadius: "10px", background: "#fff5f5" }}>
+              <p style={{ fontSize: "12px", color: "#d63031", lineHeight: "1.5", marginBottom: "10px", fontWeight: "500" }}>
+                <strong>Important:</strong> I hereby confirm that the payment details (UPI ID and QR Code) provided above are accurate and belong to me. I understand that SkillBridge will not be held responsible for any failed or incorrect transactions resulting from inaccurate information provided in this form.
+              </p>
+              <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", fontSize: "13px", fontWeight: "600", color: "rgb(37, 52, 63)" }}>
+                <input 
+                  type="checkbox" 
+                  name="termsAccepted" 
+                  checked={mentorForm.termsAccepted} 
+                  onChange={handleChange} 
+                  required 
+                  style={{ width: "18px", height: "18px", cursor: "pointer" }}
+                />
+                I agree to the above terms and conditions.
+              </label>
             </div>
 
             <button type="submit" className="mentor-submit-btn">Submit</button>
