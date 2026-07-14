@@ -9,11 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@rollup/rollup-win32-x64-msvc": "^4.60.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.6.0",
     "typeit": "^8.8.7",
-    "typeit-react": "^2.7.8"
+    "typeit-react": "2.7.7"
   },
   "devDependencies": {
     "@vitejs/plugin-basic-ssl": "^1.2.0",
