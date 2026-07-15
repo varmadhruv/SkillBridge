@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./Sections.css";
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 const MAX_FEEDBACK_LENGTH = 700;
 
 function Feedback({ studentId, studentName }) {
@@ -35,7 +37,7 @@ function Feedback({ studentId, studentName }) {
     setSubmitStatus({ text: "Submitting...", type: "info" });
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/mentor-feedback-record", {
+      const response = await fetch(`${API_URL}/mentor-feedback-record`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

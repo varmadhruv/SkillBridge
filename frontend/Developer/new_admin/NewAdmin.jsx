@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import './NewAdmin.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function NewAdmin() {
   const [formData, setFormData] = useState({
     adminName: '',
@@ -29,7 +31,7 @@ function NewAdmin() {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/create-admin', {
+      const response = await fetch(`${API_URL}/create-admin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import TypeIt from 'typeit';
 import './DiveIn.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function DiveIn() {
   const studyRef = useRef(null);
   const withoutRef = useRef(null);

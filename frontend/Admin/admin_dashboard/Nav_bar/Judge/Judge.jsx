@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './Judge.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 const Judge = () => {
   const [reports, setReports] = useState([]);
   const [sessions, setSessions] = useState([]);
@@ -18,7 +20,7 @@ const Judge = () => {
 
   const fetchSessions = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/all-sessions');
+      const response = await fetch(`${API_URL}/all-sessions`);
       const data = await response.json();
       if (data.data) {
         setSessions(data.data);
@@ -30,7 +32,7 @@ const Judge = () => {
 
   const fetchMentors = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/mentor-records');
+      const response = await fetch(`${API_URL}/mentor-records`);
       const data = await response.json();
       if (data.data) {
         setMentors(data.data);
@@ -42,7 +44,7 @@ const Judge = () => {
 
   const fetchReports = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/get-reports');
+      const response = await fetch(`${API_URL}/get-reports`);
       const data = await response.json();
       if (data.data) {
         setReports(data.data);
@@ -59,7 +61,7 @@ const Judge = () => {
 
     try {
       // First, find the mentor by name
-      const mentorResponse = await fetch('http://127.0.0.1:5000/mentor-records');
+      const mentorResponse = await fetch(`${API_URL}/mentor-records`);
       const mentorData = await mentorResponse.json();
       const mentor = mentorData.data.find(m => m.fullName === mentorName);
 
@@ -69,7 +71,7 @@ const Judge = () => {
       }
 
       // Block the mentor using the existing block endpoint
-      const blockResponse = await fetch(`http://127.0.0.1:5000/admin/mentor-block/${mentor._id}`, {
+      const blockResponse = await fetch(`${API_URL}/admin/mentor-block/${mentor._id}`, {
         method: 'POST'
       });
 
@@ -90,7 +92,7 @@ const Judge = () => {
     if (!window.confirm("Are you sure you want to dismiss this report?")) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/admin/report/${reportId}`, {
+      const response = await fetch(`${API_URL}/admin/report/${reportId}`, {
         method: 'DELETE'
       });
 
@@ -117,7 +119,7 @@ const Judge = () => {
     formData.append("paymentProof", paymentProof);
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/admin-pay-mentor/${selectedSession._id}`, {
+      const response = await fetch(`${API_URL}/admin-pay-mentor/${selectedSession._id}`, {
         method: 'POST',
         body: formData
       });

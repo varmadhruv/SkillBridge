@@ -3,6 +3,8 @@ import TypeIt from "typeit";
 import toast from 'react-hot-toast';
 import './Login.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function App() {
     const typeItRef = useRef(null);
     const animated = useRef(false);
@@ -58,7 +60,7 @@ function App() {
         }
 
         try {
-            const response = await fetch("http://127.0.0.1:5000/mentor-login", {
+            const response = await fetch(`${API_URL}/mentor-login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

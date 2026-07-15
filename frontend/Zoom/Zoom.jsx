@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './Zoom.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Zoom() {
   const [mentorData, setMentorData] = useState({});
   const [sessionLink, setSessionLink] = useState('');
@@ -24,7 +26,7 @@ function Zoom() {
 
   const createMeeting = async (studentId, mentorId, studentName, mentorName) => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/create-zoom-meeting', {
+      const response = await fetch(`${API_URL}/create-zoom-meeting`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studentId, mentorId, studentName, mentorName })

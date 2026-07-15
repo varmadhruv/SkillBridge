@@ -2,6 +2,8 @@ import "./Mentor_Login.css";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function MentorLogin() {
   const [leftText, setLeftText] = useState("");
   const [rightText, setRightText] = useState("");
@@ -141,7 +143,7 @@ function MentorLogin() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/mentor-registration", {
+      const response = await fetch(`${API_URL}/mentor-registration`, {
         method: "POST",
         body: formData
       });
@@ -175,7 +177,7 @@ function MentorLogin() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/send-registration-otp", {
+      const response = await fetch(`${API_URL}/send-registration-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: mentorForm.email.trim().toLowerCase() }),

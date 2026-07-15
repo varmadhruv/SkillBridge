@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import './Home.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Home() {
   const [mentors, setMentors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,7 +11,7 @@ function Home() {
 
   const fetchMentors = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/mentor-records');
+      const response = await fetch(`${API_URL}/mentor-records`);
       const result = await response.json();
       
       if (response.ok) {
@@ -33,7 +35,7 @@ function Home() {
     if (!window.confirm(`Are you sure you want to declare this mentor as ${newStatus}?`)) return;
     
     try {
-      const response = await fetch(`http://127.0.0.1:5000/admin/mentor-status/${mentorId}`, {
+      const response = await fetch(`${API_URL}/admin/mentor-status/${mentorId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +68,7 @@ function Home() {
   const handleLogoutAction = async (mentorId) => {
     if (!window.confirm("Are you sure you want to log out this mentor? This will delete the record.")) return;
     try {
-      const response = await fetch(`http://127.0.0.1:5000/admin/mentor-logout/${mentorId}`, { method: 'POST' });
+      const response = await fetch(`${API_URL}/admin/mentor-logout/${mentorId}`, { method: 'POST' });
       if (response.ok) {
         setMentors(prev => prev.filter(m => m._id !== mentorId));
         toast.success("Mentor Logged Out Successfully");
@@ -81,7 +83,7 @@ function Home() {
   const handleBlockAction = async (mentorId) => {
     if (!window.confirm("Are you sure you want to block this mentor?")) return;
     try {
-      const response = await fetch(`http://127.0.0.1:5000/admin/mentor-block/${mentorId}`, { method: 'POST' });
+      const response = await fetch(`${API_URL}/admin/mentor-block/${mentorId}`, { method: 'POST' });
       if (response.ok) {
         setMentors(prev => prev.filter(m => m._id !== mentorId));
         toast.success("Mentor Blocked Successfully");

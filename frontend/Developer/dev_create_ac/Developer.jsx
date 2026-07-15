@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import './Developer.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Developer() {
   const [formData, setFormData] = useState({
     fullName: '',
@@ -40,7 +42,7 @@ function Developer() {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/developer-registration', {
+      const response = await fetch(`${API_URL}/developer-registration`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

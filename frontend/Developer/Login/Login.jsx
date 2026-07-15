@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import './Login.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Login() {
   const [formData, setFormData] = useState({
     fullName: '',
@@ -20,7 +22,7 @@ function Login() {
   const handleCheck = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:5000/developer-login', {
+      const response = await fetch(`${API_URL}/developer-login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

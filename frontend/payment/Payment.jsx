@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import './Payment.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Payment() {
   const [mentorData, setMentorData] = useState({});
   const [qrImageUrl, setQrImageUrl] = useState('');
@@ -29,7 +31,7 @@ function Payment() {
     if (paymentLinkId && !paymentSuccess) {
       interval = setInterval(async () => {
         try {
-          const res = await fetch(`http://127.0.0.1:5000/check-payment-link/${paymentLinkId}`);
+          const res = await fetch(`${API_URL}/check-payment-link/${paymentLinkId}`);
           const linkData = await res.json();
           if (linkData.status === 'paid') {
             toast.success('Payment Received');
@@ -46,7 +48,7 @@ function Payment() {
 
   const fetchPaymentLink = async (mentorName) => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/create-payment-link', {
+      const response = await fetch(`${API_URL}/create-payment-link`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: 40, mentorName: mentorName })
@@ -72,7 +74,7 @@ function Payment() {
   const handlePayment = async () => {
     setLoading(true);
     try {
-      const orderResponse = await fetch('http://127.0.0.1:5000/create-order', {
+      const orderResponse = await fetch(`${API_URL}/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: 40 })
@@ -105,7 +107,7 @@ function Payment() {
           }
         },
         handler: async function (response) {
-          const verifyResponse = await fetch('http://127.0.0.1:5000/verify-payment', {
+          const verifyResponse = await fetch(`${API_URL}/verify-payment`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(response)

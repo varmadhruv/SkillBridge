@@ -2,6 +2,8 @@ import "./Main_Login.css";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function MainLogin() {
   const [fullName, setFullName] = useState("");
   const [mentorId, setMentorId] = useState("");
@@ -23,7 +25,7 @@ function MainLogin() {
     }
 
     try {
-      const recordsResponse = await fetch("http://127.0.0.1:5000/mentor-records");
+      const recordsResponse = await fetch(`${API_URL}/mentor-records`);
       const recordsData = await recordsResponse.json();
       const mentors = Array.isArray(recordsData?.data) ? recordsData.data : [];
       const normalizedName = (nameCandidate || "").trim().toLowerCase();
@@ -46,7 +48,7 @@ function MainLogin() {
 
   const isUsernameTaken = async (usernameCandidate, currentMentorId) => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/mentor-records");
+      const response = await fetch(`${API_URL}/mentor-records`);
       const data = await response.json();
       const mentors = Array.isArray(data?.data) ? data.data : [];
       const normalizedUsername = String(usernameCandidate || "").trim().toLowerCase();
@@ -75,7 +77,7 @@ function MainLogin() {
 
     const fetchMentor = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/mentor-record/${normalizedMentorId}`);
+        const response = await fetch(`${API_URL}/mentor-record/${normalizedMentorId}`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -125,7 +127,7 @@ function MainLogin() {
       }
 
       const saveCredentials = async (targetId) =>
-        fetch(`http://127.0.0.1:5000/mentor-main-login/${targetId}`, {
+        fetch(`${API_URL}/mentor-main-login/${targetId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json"

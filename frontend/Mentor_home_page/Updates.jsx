@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './updates.css';
 import toast, { Toaster } from 'react-hot-toast';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Updates() {
   const [bookingRequests, setBookingRequests] = useState([]);
   const mentorId = localStorage.getItem("mentorId");
@@ -16,7 +18,7 @@ function Updates() {
   const fetchRequests = async () => {
     if (!mentorId) return;
     try {
-      const response = await fetch(`http://127.0.0.1:5000/booking-requests/${mentorId}`);
+      const response = await fetch(`${API_URL}/booking-requests/${mentorId}`);
       const data = await response.json();
       if (data.data) {
         setBookingRequests(data.data);
@@ -28,7 +30,7 @@ function Updates() {
 
   const handleSetAvailable = async (requestId) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/booking-request/${requestId}`, {
+      const response = await fetch(`${API_URL}/booking-request/${requestId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'Available' })
@@ -44,7 +46,7 @@ function Updates() {
 
   const handleSetUnavailable = async (requestId) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/booking-request/${requestId}`, {
+      const response = await fetch(`${API_URL}/booking-request/${requestId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'Declined' })

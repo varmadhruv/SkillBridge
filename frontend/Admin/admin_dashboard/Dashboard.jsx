@@ -8,6 +8,8 @@ import Contact_Dev from './Nav_bar/Contact_Dev/Contact_Dev';
 import Judge from './Nav_bar/Judge/Judge';
 import Help from './Nav_bar/Help/Help';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Dashboard() {
   const [adminName, setAdminName] = useState('');
   const [currentTab, setCurrentTab] = useState('home');

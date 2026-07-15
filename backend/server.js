@@ -14,11 +14,26 @@ import bcrypt from "bcryptjs";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://localhost:5173",
+  process.env.FRONTEND_URL
+];
 
 app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"]
 }));
 app.use(express.json());
 
@@ -34,8 +49,8 @@ const httpsOptions = (fs.existsSync(path.join(__dirname, "key.pem")) && fs.exist
   : null;
 
 const razorpay = new Razorpay({
-  key_id: "rzp_test_SjXEqbILXUgWv2",
-  key_secret: "beJb1fbm5xAaaUTzEwhmNyQR",
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 // --- Nodemailer Setup ---
@@ -43,8 +58,8 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   pool: true, // Use connection pooling for faster delivery
   auth: {
-    user: 'skilllbridgeofficial@gmail.com',
-    pass: 'fmqc xloi sddb pcwn'
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
@@ -366,7 +381,7 @@ app.post("/verify-payment", async (req, res) => {
 
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSign = crypto
-      .createHmac("sha256", "beJb1fbm5xAaaUTzEwhmNyQR")
+      .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET)
       .update(sign.toString())
       .digest("hex");
 
@@ -594,7 +609,7 @@ app.post("/mentor-login", async (request, response) => {
       message: "User , Found",
       mentorId: mentor._id.toString(),
       fullName: mentor.fullName,
-      photoUrl: `http://localhost:${PORT}/mentor-photo/${mentor._id.toString()}`,
+      photoUrl: `${BASE_URL}/mentor-photo/${mentor._id.toString()}`,
       otp: generatedOtp // Sending to frontend to verify
     });
   } catch (error) {
@@ -881,7 +896,7 @@ app.post("/mentor-registration", studentImageUpload.fields([{ name: 'profilePhot
     return response.status(201).json({
       message: "Mentor details saved successfully! ✅",
       mentorId: newMentor._id,
-      photoUrl: `http://127.0.0.1:${PORT}/mentor-photo/${newMentor._id}`
+      photoUrl: `${BASE_URL}/mentor-photo/${newMentor._id}`
     });
   } catch (error) {
     console.error("Mentor registration error:", error);
@@ -931,8 +946,8 @@ app.get("/mentor-records", async (_request, response) => {
     const mentors = await Mentor.find({}, { profilePhoto: 0, paymentQR: 0 }).sort({ submittedAt: -1 });
     const mentorsWithPhotoUrl = mentors.map((mentor) => ({
       ...mentor.toObject(),
-      photoUrl: `http://127.0.0.1:${PORT}/mentor-photo/${mentor._id}`,
-      qrUrl: `http://127.0.0.1:${PORT}/mentor-qr/${mentor._id}`
+      photoUrl: `${BASE_URL}/mentor-photo/${mentor._id}`,
+      qrUrl: `${BASE_URL}/mentor-qr/${mentor._id}`
     }));
 
     return response.json({ data: mentorsWithPhotoUrl });
@@ -952,7 +967,7 @@ app.get("/mentor-record/:id", async (request, response) => {
     return response.json({
       data: {
         ...mentor.toObject(),
-        photoUrl: `http://localhost:${PORT}/mentor-photo/${mentor._id.toString()}`
+        photoUrl: `${BASE_URL}/mentor-photo/${mentor._id.toString()}`
       }
     });
   } catch (error) {
@@ -977,7 +992,7 @@ app.get("/student-record/:id", async (request, response) => {
     return response.json({
       data: {
         ...student.toObject(),
-        photoUrl: `http://localhost:${PORT}/student-photo/${student._id.toString()}`
+        photoUrl: `${BASE_URL}/student-photo/${student._id.toString()}`
       }
     });
   } catch (error) {
@@ -1041,9 +1056,9 @@ app.post("/create-zoom-meeting", async (req, res) => {
     const mentor = await Mentor.findById(mentorId);
 
     
-    const accountId = 'R1pwlcqZSR2IIUMlRmYbYg';
-    const clientId = 'L1VLJXTfTuys9kDTHLWNw';
-    const clientSecret = 'HZ0nyVuNaqWFH1Cr1rJgHGZVSVv6ojhR';
+    const accountId = process.env.ZOOM_ACCOUNT_ID;
+    const clientId = process.env.ZOOM_CLIENT_ID;
+    const clientSecret = process.env.ZOOM_CLIENT_SECRET;
     
     const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
     
@@ -1247,7 +1262,7 @@ app.patch("/mentor-main-login/:id", async (request, response) => {
       message: "Username and password saved successfully for this mentor.",
       data: {
         ...updatedMentor.toObject(),
-        photoUrl: `http://localhost:${PORT}/mentor-photo/${updatedMentor._id}`
+        photoUrl: `${BASE_URL}/mentor-photo/${updatedMentor._id}`
       }
     });
   } catch (error) {
@@ -1434,7 +1449,7 @@ app.post("/booking-request", async (req, res) => {
             <p style="margin: 5px 0;"><strong>Year:</strong> ${studentYear}</p>
           </div>
           <div style="text-align: center;">
-            <a href="http://localhost:5173/Mentor_home_page/" style="display: inline-block; padding: 15px 30px; background: #7b2cbf; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);">Access Updates Section</a>
+            <a href="${FRONTEND_URL}/Mentor_home_page/" style="display: inline-block; padding: 15px 30px; background: #7b2cbf; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);">Access Updates Section</a>
           </div>
           <hr style="border: none; border-top: 1px solid #ccc; margin: 30px 0;">
           <p style="font-size: 0.8rem; color: #777; text-align: center;">This is an automated request from SkillBridge Mentorship Platform.</p>
@@ -1535,7 +1550,7 @@ app.patch("/admin/mentor-status/:id", async (request, response) => {
       message: `Mentor status updated to ${status}`, 
       data: {
         ...updatedMentor.toObject(),
-        photoUrl: `http://localhost:${PORT}/mentor-photo/${updatedMentor._id}`
+        photoUrl: `${BASE_URL}/mentor-photo/${updatedMentor._id}`
       }
     });
   } catch (error) {
@@ -1806,7 +1821,7 @@ app.get("/get-reports", async (_request, response) => {
       const reportObj = report.toObject();
       // If reportPhoto exists (even without the data buffer), we provide the URL
       if (report.reportPhoto && report.reportPhoto.contentType) {
-        reportObj.photoUrl = `http://127.0.0.1:${PORT}/report-photo/${report._id}`;
+        reportObj.photoUrl = `${BASE_URL}/report-photo/${report._id}`;
       } else {
         reportObj.photoUrl = null;
       }

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import './ExploreAdmin.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function ExploreAdmin() {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +14,7 @@ function ExploreAdmin() {
 
   const fetchAdmins = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/get-admins');
+      const response = await fetch(`${API_URL}/get-admins`);
       const result = await response.json();
       if (response.ok) {
         setAdmins(result.data);
@@ -30,7 +32,7 @@ function ExploreAdmin() {
     if (!window.confirm("Are you sure you want to log out this admin? This will delete the record.")) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/delete-admin/${adminId}`, {
+      const response = await fetch(`${API_URL}/delete-admin/${adminId}`, {
         method: 'DELETE',
       });
       const result = await response.json();

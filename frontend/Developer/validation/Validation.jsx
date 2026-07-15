@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import './Validation.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Validation() {
   const [securityKey, setSecurityKey] = useState('');
   const [otp, setOtp] = useState('');
@@ -23,7 +25,7 @@ function Validation() {
     if (isSendingOtp) return;
     setIsSendingOtp(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/developer-forgot-otp', {
+      const response = await fetch(`${API_URL}/developer-forgot-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -55,7 +57,7 @@ function Validation() {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/verify-security-key', {
+      const response = await fetch(`${API_URL}/verify-security-key`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

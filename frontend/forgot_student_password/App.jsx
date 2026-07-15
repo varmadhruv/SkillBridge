@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import './ForgotPassword.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function App() {
   const [email, setEmail] = useState('');
   const [emailSubmitted, setEmailSubmitted] = useState(false);
@@ -23,7 +25,7 @@ function App() {
     if (!email.trim()) { toast.error('Please enter your registered email'); return; }
     setIsLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:5000/forgot-student-password', {
+      const res = await fetch(`${API_URL}/forgot-student-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim() })
@@ -48,7 +50,7 @@ function App() {
   const handleResend = async () => {
     setIsResending(true);
     try {
-      const res = await fetch('http://127.0.0.1:5000/forgot-student-password', {
+      const res = await fetch(`${API_URL}/forgot-student-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim() })
@@ -104,7 +106,7 @@ function App() {
     if (newPassword.trim().length < 6) { toast.error('Password must be at least 6 characters'); return; }
     setIsLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:5000/reset-student-password', {
+      const res = await fetch(`${API_URL}/reset-student-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studentId, newPassword: newPassword.trim() })

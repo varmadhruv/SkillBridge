@@ -2,6 +2,8 @@ import "./Student_Login.css";
 import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function StudentLogin() {
   const [typedGreeting, setTypedGreeting] = useState("");
   const [showCursor, setShowCursor] = useState(true);
@@ -56,7 +58,7 @@ function StudentLogin() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/send-registration-otp", {
+      const response = await fetch(`${API_URL}/send-registration-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email.trim().toLowerCase() }),
@@ -79,7 +81,7 @@ function StudentLogin() {
 
   const submitStudentRegistration = async (formDataToSend) => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/student-registration', {
+      const response = await fetch(`${API_URL}/student-registration`, {
         method: 'POST',
         body: formDataToSend,
       });
@@ -156,7 +158,7 @@ function StudentLogin() {
     formDataToSend.append("studentPhoto", formData.studentPhoto);
 
     try {
-      const checkResponse = await fetch('http://127.0.0.1:5000/check-student-exists', {
+      const checkResponse = await fetch(`${API_URL}/check-student-exists`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

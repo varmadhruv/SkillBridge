@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./Home_Section.css";
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Home_Section() {
   const [mentors, setMentors] = useState([]);
   const [hoveredMentorId, setHoveredMentorId] = useState(null);
@@ -10,7 +12,7 @@ function Home_Section() {
   const studentId = localStorage.getItem("studentId");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/mentor-records")
+    fetch(`${API_URL}/mentor-records`)
       .then((res) => res.json())
       .then((data) => {
         if (data.data) {
@@ -22,7 +24,7 @@ function Home_Section() {
       .catch((err) => console.error("Error fetching mentors:", err));
 
     if (studentId) {
-      fetch(`http://127.0.0.1:5000/student-sessions/${studentId}`)
+      fetch(`${API_URL}/student-sessions/${studentId}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.data) {
@@ -37,7 +39,7 @@ function Home_Section() {
   const handleMouseEnter = (mentorId) => {
     setHoveredMentorId(mentorId);
     // Dynamic fetch for individual mentor details on hover
-    fetch(`http://127.0.0.1:5000/mentor-record/${mentorId}`)
+    fetch(`${API_URL}/mentor-record/${mentorId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.data) {

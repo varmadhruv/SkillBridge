@@ -1,6 +1,8 @@
 import "./about_us.css";
 import { useEffect, useState } from "react";
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 const MAX_FEEDBACK_LENGTH = 700;
 
 function Feedback() {
@@ -21,7 +23,7 @@ function Feedback() {
 
     const fetchMentorProfile = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/mentor-record/${storedMentorId}`);
+        const response = await fetch(`${API_URL}/mentor-record/${storedMentorId}`);
         const data = await response.json();
         if (!response.ok) return;
         const resolvedName = String(data?.data?.fullName || "").trim();
@@ -62,7 +64,7 @@ function Feedback() {
     setSubmitStatus({ text: "Submitting...", type: "info" });
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/mentor-feedback-record", {
+      const response = await fetch(`${API_URL}/mentor-feedback-record`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

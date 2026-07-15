@@ -2,6 +2,8 @@ import "./home.css";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Home() {
   const [mentorName, setMentorName] = useState((localStorage.getItem("mentorFullName") || "Mentor").trim() || "Mentor");
   const [profilePhotoUrl, setProfilePhotoUrl] = useState(localStorage.getItem("mentorPhotoUrl") || "");
@@ -84,7 +86,7 @@ function Home() {
       };
 
       const deleteById = async (targetId) => {
-        const response = await fetch(`http://127.0.0.1:5000/mentor-record/${targetId}`, {
+        const response = await fetch(`${API_URL}/mentor-record/${targetId}`, {
           method: "DELETE"
         });
         const data = await parseApiResponse(response);
@@ -92,7 +94,7 @@ function Home() {
       };
 
       const fallbackResolveId = async () => {
-        const recordsResponse = await fetch("http://127.0.0.1:5000/mentor-records");
+        const recordsResponse = await fetch(`${API_URL}/mentor-records`);
         const recordsData = await parseApiResponse(recordsResponse);
         const mentors = Array.isArray(recordsData?.data) ? recordsData.data : [];
 
@@ -155,7 +157,7 @@ function Home() {
 
     const fetchMentorProfile = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/mentor-record/${mentorId}`);
+        const response = await fetch(`${API_URL}/mentor-record/${mentorId}`);
         const data = await response.json();
         if (!response.ok) return;
 
@@ -179,7 +181,7 @@ function Home() {
 
     const fetchSessions = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/mentor-sessions/${mentorId}`);
+        const response = await fetch(`${API_URL}/mentor-sessions/${mentorId}`);
         const data = await response.json();
         if (response.ok && data.data) {
           setSessions(data.data);
@@ -284,10 +286,10 @@ function Home() {
                   <div style={{ textAlign: "center" }}>
                     <p style={{ fontSize: "12px", color: "#666", marginBottom: "5px" }}>Admin Payment Proof</p>
                     <img 
-                      src={`http://127.0.0.1:5000/mentor-payment-proof/${session._id}`} 
+                      src={`${API_URL}/mentor-payment-proof/${session._id}`} 
                       alt="Payment Proof" 
                       style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "5px", border: "1px solid #28a745", cursor: "pointer" }}
-                      onClick={() => window.open(`http://127.0.0.1:5000/mentor-payment-proof/${session._id}`, '_blank')}
+                      onClick={() => window.open(`${API_URL}/mentor-payment-proof/${session._id}`, '_blank')}
                     />
                   </div>
                 </div>

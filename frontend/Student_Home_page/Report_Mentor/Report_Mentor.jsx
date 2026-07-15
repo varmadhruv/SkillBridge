@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./Report_Mentor.css";
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 const Report_Mentor = () => {
   const [formData, setFormData] = useState({
     mentorName: "",
@@ -37,7 +39,7 @@ const Report_Mentor = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/submit-report", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/submit-report`, {
         method: "POST",
         body: formDataToSend,
       });

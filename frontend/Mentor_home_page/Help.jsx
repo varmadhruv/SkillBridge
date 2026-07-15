@@ -1,6 +1,8 @@
 import "./about_us.css";
 import { useEffect, useState } from "react";
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Help() {
   const [mentorName, setMentorName] = useState((localStorage.getItem("mentorFullName") || "Mentor").trim() || "Mentor");
 
@@ -10,7 +12,7 @@ function Help() {
 
     const fetchMentorProfile = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/mentor-record/${mentorId}`);
+        const response = await fetch(`${API_URL}/mentor-record/${mentorId}`);
         const data = await response.json();
         if (!response.ok) return;
         const resolvedName = String(data?.data?.fullName || "").trim();

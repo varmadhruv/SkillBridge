@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import './Consent.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Consent() {
     const [isAccepted, setIsAccepted] = useState(false);
 

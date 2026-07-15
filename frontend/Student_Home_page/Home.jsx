@@ -8,6 +8,8 @@ import Home_Section from "./Home_Section/Home_Section";
 import Report_Mentor from "./Report_Mentor/Report_Mentor";
 
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Home() {
   const [activeTab, setActiveTab] = useState("Home");
   const [studentName, setStudentName] = useState(localStorage.getItem("studentFullName") || "Student");
@@ -47,7 +49,7 @@ function Home() {
   useEffect(() => {
     if (activeTab === "My Account" && studentId && !studentData) {
       console.log("Fetching student data for ID:", studentId);
-      fetch(`http://127.0.0.1:5000/student-record/${studentId}`)
+      fetch(`${API_URL}/student-record/${studentId}`)
         .then(res => {
           if (!res.ok) throw new Error(`Server returned ${res.status}`);
           return res.json();

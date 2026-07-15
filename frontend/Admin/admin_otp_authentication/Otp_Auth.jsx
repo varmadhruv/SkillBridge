@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './Otp_Auth.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Otp_Auth() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
@@ -27,7 +29,7 @@ function Otp_Auth() {
 
     setIsResending(true);
     try {
-      const response = await fetch('http://127.0.0.1:5000/admin-otp-resend', {
+      const response = await fetch(`${API_URL}/admin-otp-resend`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ adminEmail: email })

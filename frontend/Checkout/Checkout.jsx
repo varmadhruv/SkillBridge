@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Checkout.css';
 import toast, { Toaster } from 'react-hot-toast';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function Checkout() {
   const [mentor, setMentor] = useState(null);
   const [studentId] = useState(() => {
@@ -27,7 +29,7 @@ function Checkout() {
 
     const checkStatus = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/booking-status/${studentId}/${mentor._id}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/booking-status/${studentId}/${mentor._id}`);
         const data = await response.json();
         if (data.data) {
           setBookingStatus(data.data.status);
@@ -53,7 +55,7 @@ function Checkout() {
     setLoading(true);
     try {
       // Fetch latest student data to ensure we have all details
-      const studentRes = await fetch(`http://127.0.0.1:5000/student-record/${studentId}`);
+      const studentRes = await fetch(`${import.meta.env.VITE_API_URL}/student-record/${studentId}`);
       const studentData = await studentRes.json();
       
       if (!studentData.data) {
@@ -64,8 +66,8 @@ function Checkout() {
       
       const s = studentData.data;
 
-      const studentPhotoUrl = `http://127.0.0.1:5000/student-photo/${studentId}`;
-      const response = await fetch('http://127.0.0.1:5000/booking-request', {
+      const studentPhotoUrl = `${import.meta.env.VITE_API_URL}/student-photo/${studentId}`;
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/booking-request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -99,7 +101,7 @@ function Checkout() {
   const handleCancelRequest = async (silent = false) => {
     if (!silent && !window.confirm("Are you sure you want to cancel your request?")) return;
     try {
-      const response = await fetch(`http://127.0.0.1:5000/booking-request/${studentId}/${mentor._id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/booking-request/${studentId}/${mentor._id}`, {
         method: 'DELETE'
       });
       if (response.ok) {

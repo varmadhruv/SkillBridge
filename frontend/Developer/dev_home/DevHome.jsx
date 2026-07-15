@@ -1,6 +1,8 @@
 import React from 'react';
 import './DevHome.css';
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function DevHome() {
   return (
     <div className="dev-home-container">

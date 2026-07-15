@@ -1,5 +1,7 @@
 import "./contact_us.css";
 
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 function ContactUs() {
   return (
     <main className="mentor-about-page">
