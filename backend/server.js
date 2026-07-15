@@ -26,7 +26,7 @@ const allowedOrigins = [
 console.log("Allowed Origins:", allowedOrigins);
 
 app.use(cors({
-  origin: function(origin, callback) {
+  origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -34,20 +34,23 @@ app.use(cors({
     }
   },
   credentials: true,
-  methods: ["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization"]
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(express.json());
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+console.log("Frontend Dist Path:", frontendDist);
+console.log("Dist Exists:", fs.existsSync(frontendDist));
+
 // HTTPS options are only used for local development; Render handles TLS termination itself.
 const httpsOptions = (fs.existsSync(path.join(__dirname, "key.pem")) && fs.existsSync(path.join(__dirname, "cert.pem")))
   ? {
-      key: fs.readFileSync(path.join(__dirname, "key.pem")),
-      cert: fs.readFileSync(path.join(__dirname, "cert.pem")),
-    }
+    key: fs.readFileSync(path.join(__dirname, "key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "cert.pem")),
+  }
   : null;
 
 const razorpay = new Razorpay({
@@ -415,8 +418,8 @@ app.post("/create-payment-link", async (req, res) => {
     res.json(paymentLink);
   } catch (error) {
     console.error("Razorpay Payment Link error:", error);
-    res.status(500).json({ 
-      message: "Razorpay API Error", 
+    res.status(500).json({
+      message: "Razorpay API Error",
       error: error.description || (error.error && error.error.description) || error.message || JSON.stringify(error)
     });
   }
@@ -529,7 +532,7 @@ app.post("/student-login", async (request, response) => {
     }
 
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Send email asynchronously to avoid blocking the response
     transporter.sendMail({
       from: 'skilllbridgeofficial@gmail.com',
@@ -545,7 +548,7 @@ app.post("/student-login", async (request, response) => {
       console.error("Failed to send OTP email:", mailError);
     });
 
-    return response.json({ 
+    return response.json({
       message: "User , Found",
       studentId: student._id.toString(),
       fullName: student.fullName,
@@ -591,7 +594,7 @@ app.post("/mentor-login", async (request, response) => {
     }
 
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Send email asynchronously to avoid blocking the response
     transporter.sendMail({
       from: 'skilllbridgeofficial@gmail.com',
@@ -607,7 +610,7 @@ app.post("/mentor-login", async (request, response) => {
       console.error("Failed to send OTP email:", mailError);
     });
 
-    return response.json({ 
+    return response.json({
       message: "User , Found",
       mentorId: mentor._id.toString(),
       fullName: mentor.fullName,
@@ -628,7 +631,7 @@ app.post("/resend-otp", async (request, response) => {
     }
 
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Send email asynchronously
     transporter.sendMail({
       from: 'skilllbridgeofficial@gmail.com',
@@ -644,7 +647,7 @@ app.post("/resend-otp", async (request, response) => {
       console.error("Failed to resend OTP email:", mailError);
     });
 
-    return response.json({ 
+    return response.json({
       message: "OTP Resent Successfully",
       otp: generatedOtp
     });
@@ -662,7 +665,7 @@ app.post("/send-registration-otp", async (request, response) => {
     }
 
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Send email asynchronously
     transporter.sendMail({
       from: 'skilllbridgeofficial@gmail.com',
@@ -677,7 +680,7 @@ app.post("/send-registration-otp", async (request, response) => {
       console.error("Failed to send registration OTP email:", mailError);
     });
 
-    return response.json({ 
+    return response.json({
       message: "OTP Sent Successfully",
       otp: generatedOtp
     });
@@ -745,7 +748,7 @@ app.post("/student-registration", studentImageUpload.single("studentPhoto"), asy
     }
 
     // Check if email, universityPRN, or contact already exists
-    const existingStudent = await Student.findOne({ 
+    const existingStudent = await Student.findOne({
       $or: [{ email }, { universityPRN }, { contact }]
     });
 
@@ -1015,9 +1018,9 @@ app.patch("/student-main-login", async (request, response) => {
     const trimmedEmail = email.trim();
 
     // Check only in Student collection (excluding current student)
-    const studentExists = await Student.findOne({ 
-      username: { $regex: new RegExp(`^${trimmedUsername}$`, "i") }, 
-      email: { $ne: trimmedEmail } 
+    const studentExists = await Student.findOne({
+      username: { $regex: new RegExp(`^${trimmedUsername}$`, "i") },
+      email: { $ne: trimmedEmail }
     });
 
     if (studentExists) {
@@ -1037,7 +1040,7 @@ app.patch("/student-main-login", async (request, response) => {
     if (!updatedStudent) {
       return response.status(404).json({ message: "Student record not found" });
     }
-    
+
     return response.json({ message: "Student login details updated successfully!" });
   } catch (error) {
     console.error("Student main login error:", error);
@@ -1048,7 +1051,7 @@ app.patch("/student-main-login", async (request, response) => {
 app.post("/create-zoom-meeting", async (req, res) => {
   try {
     const { studentId, mentorId, studentName, mentorName } = req.body;
-    
+
     // Check if session already exists
     const existingSession = await Session.findOne({ studentId, mentorId }).sort({ createdAt: -1 });
     if (existingSession) {
@@ -1057,13 +1060,13 @@ app.post("/create-zoom-meeting", async (req, res) => {
 
     const mentor = await Mentor.findById(mentorId);
 
-    
+
     const accountId = process.env.ZOOM_ACCOUNT_ID;
     const clientId = process.env.ZOOM_CLIENT_ID;
     const clientSecret = process.env.ZOOM_CLIENT_SECRET;
-    
+
     const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-    
+
     const tokenResponse = await fetch(`https://zoom.us/oauth/token?grant_type=account_credentials&account_id=${accountId}`, {
       method: 'POST',
       headers: {
@@ -1071,12 +1074,12 @@ app.post("/create-zoom-meeting", async (req, res) => {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     });
-    
+
     const tokenData = await tokenResponse.json();
     if (!tokenData.access_token) {
       throw new Error("Failed to get Zoom access token");
     }
-    
+
     const meetingResponse = await fetch('https://api.zoom.us/v2/users/me/meetings', {
       method: 'POST',
       headers: {
@@ -1085,7 +1088,7 @@ app.post("/create-zoom-meeting", async (req, res) => {
       },
       body: JSON.stringify({
         topic: `1-to-1 Mentorship: ${studentName} & ${mentorName}`,
-        type: 2, 
+        type: 2,
         duration: 60,
         settings: {
           host_video: true,
@@ -1096,9 +1099,9 @@ app.post("/create-zoom-meeting", async (req, res) => {
         }
       })
     });
-    
+
     const meetingData = await meetingResponse.json();
-    
+
     const newSession = new Session({
       studentId,
       mentorId,
@@ -1107,9 +1110,9 @@ app.post("/create-zoom-meeting", async (req, res) => {
       joinUrl: meetingData.join_url,
       startUrl: meetingData.start_url
     });
-    
+
     await newSession.save();
-    
+
     if (mentor && mentor.email) {
       const mailOptions = {
         from: '"SkillBridge Notification" <skilllbridgeofficial@gmail.com>',
@@ -1237,7 +1240,7 @@ app.patch("/mentor-main-login/:id", async (request, response) => {
     }
 
     // Mentor-only uniqueness check
-    const mentorExists = await Mentor.findOne({ 
+    const mentorExists = await Mentor.findOne({
       mentorUsername: { $regex: new RegExp(`^${mentorUsername}$`, "i") },
       _id: { $ne: mentorId }
     });
@@ -1316,10 +1319,10 @@ app.post("/admin-login", async (request, response) => {
       // If bcrypt fails, fallback to plain text check (for legacy records)
       isPasswordCorrect = (AdminPassword.trim() === admin.AdminPassword);
     }
-    
+
     // Additional fallback: if bcrypt didn't throw but returned false, still check plain text if the stored password doesn't look like a hash
     if (!isPasswordCorrect && !admin.AdminPassword.startsWith('$2')) {
-       isPasswordCorrect = (AdminPassword.trim() === admin.AdminPassword);
+      isPasswordCorrect = (AdminPassword.trim() === admin.AdminPassword);
     }
 
     if (!isPasswordCorrect) {
@@ -1327,7 +1330,7 @@ app.post("/admin-login", async (request, response) => {
     }
 
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Send email asynchronously
     transporter.sendMail({
       from: 'skilllbridgeofficial@gmail.com',
@@ -1342,8 +1345,8 @@ app.post("/admin-login", async (request, response) => {
       console.error("Failed to send Admin OTP email:", mailError);
     });
 
-    return response.status(200).json({ 
-      message: "Admin Login successful!", 
+    return response.status(200).json({
+      message: "Admin Login successful!",
       adminId: admin._id.toString(),
       AdminName: admin.AdminName,
       adminEmail: admin.AdminEmail,
@@ -1406,7 +1409,7 @@ app.post("/booking-request", async (req, res) => {
     // Check if there's already a request
     let targetBooking;
     const existing = await Booking.findOne({ studentId, mentorId });
-    
+
     if (existing) {
       existing.status = 'Pending';
       existing.requestedAt = Date.now();
@@ -1498,8 +1501,8 @@ app.get("/booking-status/:studentId/:mentorId", async (req, res) => {
     const { studentId, mentorId } = req.params;
     // Only return requests from the last 2 hours to avoid "skipping" the availability step due to old records
     const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
-    const booking = await Booking.findOne({ 
-      studentId, 
+    const booking = await Booking.findOne({
+      studentId,
       mentorId,
       requestedAt: { $gte: twoHoursAgo }
     }).sort({ requestedAt: -1 });
@@ -1548,8 +1551,8 @@ app.patch("/admin/mentor-status/:id", async (request, response) => {
       return response.status(404).json({ message: "Mentor not found" });
     }
 
-    return response.json({ 
-      message: `Mentor status updated to ${status}`, 
+    return response.json({
+      message: `Mentor status updated to ${status}`,
       data: {
         ...updatedMentor.toObject(),
         photoUrl: `${BASE_URL}/mentor-photo/${updatedMentor._id}`
@@ -1584,7 +1587,7 @@ app.post("/admin/mentor-block/:id", async (request, response) => {
     if (!mongoose.Types.ObjectId.isValid(mentorId)) {
       return response.status(400).json({ message: "Invalid mentor id." });
     }
-    
+
     const mentor = await Mentor.findById(mentorId);
     if (!mentor) {
       return response.status(404).json({ message: "Mentor not found" });
@@ -1638,7 +1641,7 @@ app.post("/developer-registration", async (request, response) => {
     if (!fullName || !email || !password || !securityKey) {
       return response.status(400).json({ message: "All fields are required." });
     }
-    
+
     const trimmedFullName = fullName.trim();
     const trimmedEmail = email.trim().toLowerCase();
     const trimmedSecurityKey = securityKey.trim();
@@ -1648,11 +1651,11 @@ app.post("/developer-registration", async (request, response) => {
       return response.status(409).json({ message: "Developer with this email already exists." });
     }
     const hashedPassword = await bcrypt.hash(password.trim(), 10);
-    const newDeveloper = new DeveloperRecord({ 
-      fullName: trimmedFullName, 
-      email: trimmedEmail, 
-      password: hashedPassword, 
-      securityKey: trimmedSecurityKey 
+    const newDeveloper = new DeveloperRecord({
+      fullName: trimmedFullName,
+      email: trimmedEmail,
+      password: hashedPassword,
+      securityKey: trimmedSecurityKey
     });
     await newDeveloper.save();
     return response.status(201).json({ message: "Developer Account Created Successfully!" });
@@ -1691,11 +1694,11 @@ app.post("/verify-security-key", async (request, response) => {
 
     // We check both but only need one to be correct
     const isOtpCorrect = otp && expectedOtp && otp === expectedOtp;
-    
+
     let isKeyCorrect = false;
     if (securityKey) {
-      const developer = await DeveloperRecord.findOne({ 
-        securityKey: securityKey.trim() 
+      const developer = await DeveloperRecord.findOne({
+        securityKey: securityKey.trim()
       });
       if (developer) isKeyCorrect = true;
     }
@@ -1747,10 +1750,10 @@ app.post("/developer-login", async (request, response) => {
       // If bcrypt fails, fallback to plain text check (for legacy records)
       isPasswordCorrect = (password.trim() === developer.password);
     }
-    
+
     // Additional fallback: if bcrypt didn't throw but returned false, still check plain text if the stored password doesn't look like a hash
     if (!isPasswordCorrect && !developer.password.startsWith('$2')) {
-       isPasswordCorrect = (password.trim() === developer.password);
+      isPasswordCorrect = (password.trim() === developer.password);
     }
 
     if (!isPasswordCorrect) {
@@ -1758,7 +1761,7 @@ app.post("/developer-login", async (request, response) => {
     }
 
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Send email asynchronously
     transporter.sendMail({
       from: 'skilllbridgeofficial@gmail.com',
@@ -1773,7 +1776,7 @@ app.post("/developer-login", async (request, response) => {
       console.error("Failed to send Developer OTP email:", mailError);
     });
 
-    return response.json({ 
+    return response.json({
       message: "Login successful",
       developerId: developer._id.toString(),
       fullName: developer.fullName,
@@ -1818,7 +1821,7 @@ app.get("/get-reports", async (_request, response) => {
   try {
     // Exclude only the heavy image data, but keep the metadata (like contentType) to know if a photo exists
     const reports = await Report.find({}, { "reportPhoto.data": 0 }).sort({ submittedAt: -1 });
-    
+
     const reportsWithPhotoUrl = reports.map((report) => {
       const reportObj = report.toObject();
       // If reportPhoto exists (even without the data buffer), we provide the URL
@@ -1829,7 +1832,7 @@ app.get("/get-reports", async (_request, response) => {
       }
       return reportObj;
     });
-    
+
     return response.json({ data: reportsWithPhotoUrl });
   } catch (error) {
     console.error("Fetch reports error:", error);
