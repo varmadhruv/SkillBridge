@@ -357,7 +357,7 @@ mongoose.connection.on('connected', async () => {
   }
 });
 
-app.get("/", (_request, response) => {
+app.get("/api", (_request, response) => {
   response.json({ message: "Backend is running" });
 });
 
