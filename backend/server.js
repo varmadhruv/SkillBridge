@@ -70,14 +70,14 @@ const transporter = nodemailer.createTransport({
 
 
 
-transporter.verify((err, success) => {
+transporter.verify((err) => {
   if (err) {
-    console.log(err);
+    console.error("VERIFY ERROR:");
+    console.error(err);
   } else {
     console.log("SMTP READY");
   }
 });
-
 
 
 const studentImageUpload = multer({
