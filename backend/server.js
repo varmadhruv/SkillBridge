@@ -58,13 +58,27 @@ const razorpay = new Razorpay({
 
 // --- Nodemailer Setup ---
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  pool: true, // Use connection pooling for faster delivery
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+
+
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("SMTP Error:", error);
+  } else {
+    console.log("SMTP Ready");
   }
 });
+
+
+
 
 const studentImageUpload = multer({
   storage: multer.memoryStorage(),
@@ -655,36 +669,46 @@ app.post("/resend-otp", async (request, response) => {
   }
 });
 
-app.post("/send-registration-otp", async (request, response) => {
+app.post("/send-registration-otp", async (req, res) => {
   try {
-    const { email } = request.body;
+    const { email } = req.body;
+
     if (!email) {
-      return response.status(400).json({ message: "Email is required" });
+      return res.status(400).json({
+        message: "Email is required"
+      });
     }
 
-    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    const generatedOtp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
 
-    // Send email asynchronously
-    transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
       to: email,
-      subject: 'SkillBridge Registration OTP',
-      html: `<h2>Welcome to SkillBridge!</h2>
-             <p>Your 6-digit OTP for registration is: <strong>${generatedOtp}</strong></p>
-             <p>Please enter this code to verify your email address.</p>`
-    }).then(() => {
-      console.log("Registration OTP sent to:", email);
-    }).catch((mailError) => {
-      console.error("Failed to send registration OTP email:", mailError);
+      subject: "SkillBridge Registration OTP",
+      html: `
+        <h2>Welcome to SkillBridge!</h2>
+        <p>Your OTP is <b>${generatedOtp}</b></p>
+      `
     });
 
-    return response.json({
-      message: "OTP Sent Successfully",
+    console.log("OTP sent:", email);
+
+    return res.json({
+      success: true,
       otp: generatedOtp
     });
-  } catch (error) {
-    console.error("Registration OTP error:", error);
-    return response.status(500).json({ message: "Failed to send OTP" });
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Email sending failed"
+    });
+
   }
 });
 
