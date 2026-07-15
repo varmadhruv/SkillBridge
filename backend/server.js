@@ -42,8 +42,6 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log("Frontend Dist Path:", frontendDist);
-console.log("Dist Exists:", fs.existsSync(frontendDist));
 
 // HTTPS options are only used for local development; Render handles TLS termination itself.
 const httpsOptions = (fs.existsSync(path.join(__dirname, "key.pem")) && fs.existsSync(path.join(__dirname, "cert.pem")))
@@ -2060,6 +2058,15 @@ app.post("/reset-dev-password", async (request, response) => {
 
 // --- Serve Vite Frontend Build (Production) ---
 const frontendDist = path.join(__dirname, "..", "frontend", "dist");
+
+
+console.log("==================================");
+console.log("__dirname:", __dirname);
+console.log("frontendDist:", frontendDist);
+console.log("Dist Exists:", fs.existsSync(frontendDist));
+console.log("==================================");
+
+
 if (fs.existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
 
