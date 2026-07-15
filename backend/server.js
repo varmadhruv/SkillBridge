@@ -58,27 +58,30 @@ const razorpay = new Razorpay({
 
 // --- Nodemailer Setup ---
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
-  connectionTimeout: 30000,
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
+  connectionTimeout: 60000,
+  greetingTimeout: 60000,
+  socketTimeout: 60000,
+  tls: {
+    family: 4,
+    rejectUnauthorized: false,
+  },
 });
-
 
 
 transporter.verify((err) => {
   if (err) {
-    console.error("VERIFY ERROR:");
-    console.error(err);
+    console.error("VERIFY ERROR:", err);
   } else {
     console.log("SMTP READY");
   }
 });
-
 
 const studentImageUpload = multer({
   storage: multer.memoryStorage(),
