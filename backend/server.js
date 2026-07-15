@@ -543,7 +543,7 @@ app.post("/student-login", async (request, response) => {
 
     // Send email asynchronously to avoid blocking the response
     transporter.sendMail({
-      from: 'from: '"SkillBridge" <dhruvvarma47@gmail.com>',',
+      from: '"SkillBridge" <dhruvvarma47@gmail.com>',
       to: student.email,
       subject: 'SkillBridge Login OTP',
       html: `<h2>Your OTP for SkillBridge Login</h2>
