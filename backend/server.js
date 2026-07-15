@@ -58,28 +58,21 @@ const razorpay = new Razorpay({
 
 // --- Nodemailer Setup ---
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 60000,
-  greetingTimeout: 60000,
-  socketTimeout: 60000,
-  tls: {
-    family: 4,
-    rejectUnauthorized: false,
   },
 });
 
 
 transporter.verify((err) => {
   if (err) {
-    console.error("VERIFY ERROR:", err);
+    console.error("SMTP ERROR:", err);
   } else {
-    console.log("SMTP READY");
+    console.log("BREVO SMTP READY");
   }
 });
 
@@ -550,7 +543,7 @@ app.post("/student-login", async (request, response) => {
 
     // Send email asynchronously to avoid blocking the response
     transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+      from: 'from: '"SkillBridge" <dhruvvarma47@gmail.com>',',
       to: student.email,
       subject: 'SkillBridge Login OTP',
       html: `<h2>Your OTP for SkillBridge Login</h2>
@@ -612,7 +605,7 @@ app.post("/mentor-login", async (request, response) => {
 
     // Send email asynchronously to avoid blocking the response
     transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+      from: '"SkillBridge" <dhruvvarma47@gmail.com>',
       to: mentor.email,
       subject: 'SkillBridge Login OTP',
       html: `<h2>Your OTP for SkillBridge Login</h2>
@@ -649,7 +642,7 @@ app.post("/resend-otp", async (request, response) => {
 
     // Send email asynchronously
     transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+      from: '"SkillBridge" <dhruvvarma47@gmail.com>',
       to: email,
       subject: 'SkillBridge Login OTP - Resend',
       html: `<h2>Your OTP for SkillBridge Login</h2>
@@ -1358,7 +1351,7 @@ app.post("/admin-login", async (request, response) => {
 
     // Send email asynchronously
     transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+      from: '"SkillBridge" <dhruvvarma47@gmail.com>',
       to: admin.AdminEmail, // Sending to the admin's email
       subject: 'Admin Login OTP',
       html: `<h2>Your OTP for Admin Login</h2>
@@ -1398,7 +1391,7 @@ app.post("/admin-otp-resend", async (request, response) => {
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
     await transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+      from: '"SkillBridge" <dhruvvarma47@gmail.com>',
       to: admin.AdminEmail,
       subject: 'Admin Login OTP',
       html: `<h2>Your OTP for Admin Verification</h2>
@@ -1699,7 +1692,7 @@ app.post("/developer-forgot-otp", async (request, response) => {
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
     transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+      from: '"SkillBridge" <dhruvvarma47@gmail.com>',
       to: developer.email,
       subject: 'Developer Password Recovery OTP',
       html: `<h2>Your OTP for Password Recovery</h2>
@@ -1789,7 +1782,7 @@ app.post("/developer-login", async (request, response) => {
 
     // Send email asynchronously
     transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+      from: '"SkillBridge" <dhruvvarma47@gmail.com>',
       to: developer.email,
       subject: 'Developer Login OTP',
       html: `<h2>Your OTP for Developer Panel Login</h2>
@@ -1909,7 +1902,7 @@ app.post("/forgot-mentor-password", async (request, response) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+      from: '"SkillBridge" <dhruvvarma47@gmail.com>',
       to: mentor.email,
       subject: 'SkillBridge - Password Reset OTP',
       html: `<h2>Password Reset Request</h2>
@@ -1956,7 +1949,7 @@ app.post("/forgot-student-password", async (request, response) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+      from: '"SkillBridge" <dhruvvarma47@gmail.com>',
       to: student.email,
       subject: 'SkillBridge - Password Reset OTP',
       html: `<h2>Password Reset Request</h2>
@@ -2003,7 +1996,7 @@ app.post("/forgot-admin-password", async (request, response) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+      from: '"SkillBridge" <dhruvvarma47@gmail.com>',
       to: admin.AdminEmail,
       subject: 'SkillBridge Admin - Password Reset OTP',
       html: `<h2>Admin Password Reset Request</h2>
@@ -2050,7 +2043,7 @@ app.post("/forgot-dev-password", async (request, response) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     transporter.sendMail({
-      from: 'skilllbridgeofficial@gmail.com',
+      from: '"SkillBridge" <dhruvvarma47@gmail.com>',
       to: developer.email,
       subject: 'SkillBridge Developer - Password Reset OTP',
       html: `<h2>Developer Password Reset Request</h2>
