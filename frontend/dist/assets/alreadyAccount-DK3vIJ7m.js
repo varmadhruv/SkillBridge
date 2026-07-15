@@ -1,1 +1,0 @@
-import{j as t,c as e,R as o}from"./client-DYDkQYN6.js";function r(){return t.jsx("div",{style:{backgroundColor:"black",width:"100vw",height:"100vh"}})}e.createRoot(document.getElementById("root")).render(t.jsx(o.StrictMode,{children:t.jsx(r,{})}));
