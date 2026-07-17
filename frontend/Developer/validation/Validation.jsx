@@ -3,7 +3,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import './Validation.css';
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function Validation() {
   const [securityKey, setSecurityKey] = useState('');
   const [otp, setOtp] = useState('');

@@ -9,7 +9,7 @@ import Report_Mentor from "./Report_Mentor/Report_Mentor";
 
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function Home() {
   const [activeTab, setActiveTab] = useState("Home");
   const [studentName, setStudentName] = useState(localStorage.getItem("studentFullName") || "Student");

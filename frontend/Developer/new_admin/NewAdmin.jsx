@@ -3,7 +3,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import './NewAdmin.css';
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function NewAdmin() {
   const [formData, setFormData] = useState({
     adminName: '',

@@ -3,7 +3,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import './ForgotPassword.css';
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function App() {
   const [email, setEmail] = useState('');
   const [emailSubmitted, setEmailSubmitted] = useState(false);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Home_Section.css";
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function Home_Section() {
   const [mentors, setMentors] = useState([]);
   const [hoveredMentorId, setHoveredMentorId] = useState(null);

@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import "./StudentMainLogin.css";
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function StudentMainLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

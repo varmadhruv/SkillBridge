@@ -9,7 +9,7 @@ import Judge from './Nav_bar/Judge/Judge';
 import Help from './Nav_bar/Help/Help';
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function Dashboard() {
   const [adminName, setAdminName] = useState('');
   const [currentTab, setCurrentTab] = useState('home');

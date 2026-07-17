@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Otp_Auth.css';
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function Otp_Auth() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');

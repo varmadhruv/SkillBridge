@@ -3,7 +3,7 @@ import './Checkout.css';
 import toast, { Toaster } from 'react-hot-toast';
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function Checkout() {
   const [mentor, setMentor] = useState(null);
   const [studentId] = useState(() => {

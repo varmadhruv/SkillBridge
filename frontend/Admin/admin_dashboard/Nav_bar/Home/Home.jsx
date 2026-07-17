@@ -3,7 +3,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import './Home.css';
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function Home() {
   const [mentors, setMentors] = useState([]);
   const [loading, setLoading] = useState(true);

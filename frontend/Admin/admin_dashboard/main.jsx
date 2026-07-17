@@ -4,7 +4,7 @@ import Dashboard from './Dashboard';
 import './Dashboard.css';
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Dashboard />

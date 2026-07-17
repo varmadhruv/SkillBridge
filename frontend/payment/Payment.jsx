@@ -3,7 +3,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import './Payment.css';
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function Payment() {
   const [mentorData, setMentorData] = useState({});
   const [qrImageUrl, setQrImageUrl] = useState('');

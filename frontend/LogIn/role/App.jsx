@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./Role.css";
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function App() {
   const [selectedRole, setSelectedRole] = useState("");
 

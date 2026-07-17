@@ -4,7 +4,7 @@ import { Toaster } from "react-hot-toast";
 import Consent from "./Consent";
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Toaster position="bottom-left" />

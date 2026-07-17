@@ -3,7 +3,7 @@ import "./contact_us.css";
 import { useEffect, useState } from "react";
 
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 function ContactUs() {
   const [mentorName, setMentorName] = useState((localStorage.getItem("mentorFullName") || "Mentor").trim() || "Mentor");
 

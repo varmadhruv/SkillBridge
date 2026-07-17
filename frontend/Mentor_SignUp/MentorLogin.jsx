@@ -3,10 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 
-const API_URL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:5000"
-    : window.location.origin;
+const API_URL = import.meta.env.VITE_API_URL;
 function MentorLogin() {
   const [leftText, setLeftText] = useState("");
   const [rightText, setRightText] = useState("");
