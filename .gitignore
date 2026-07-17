@@ -24,3 +24,7 @@ Thumbs.db
 # SSL certs (local dev only)
 backend/key.pem
 backend/cert.pem
+
+node_modules
+.env
+backend/.env
