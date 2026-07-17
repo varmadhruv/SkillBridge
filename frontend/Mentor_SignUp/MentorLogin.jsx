@@ -177,6 +177,9 @@ function MentorLogin() {
     }
 
     try {
+      console.log("VITE_API_URL =", import.meta.env.VITE_API_URL);
+console.log("API_URL =", API_URL);
+console.log("Final URL =", `${API_URL}/send-registration-otp`);
       const response = await fetch(`${API_URL}/send-registration-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
