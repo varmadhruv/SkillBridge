@@ -642,8 +642,14 @@ app.post("/mentor-login", async (request, response) => {
       photoUrl: `${BASE_URL}/mentor-photo/${mentor._id.toString()}`,
       otp: generatedOtp
     });
+  } catch (error) {
+    console.error("Mentor login error:", error);
+    return response.status(500).json({ message: "Login process failed" });
+  }
+});
+// FIXED: Closed /mentor-login route here (was missing }); before next app.post)
 
-    app.post("/resend-otp", async (request, response) => {
+app.post("/resend-otp", async (request, response) => {
       try {
         const { email, role } = request.body;
         if (!email) {
@@ -674,13 +680,13 @@ app.post("/mentor-login", async (request, response) => {
           message: "OTP Resent Successfully",
           otp: generatedOtp
         });
-      } catch (error) {
-        console.error("Resend OTP error:", error);
-        return response.status(500).json({ message: "Failed to resend OTP" });
-      }
-    });
+  } catch (error) {
+    console.error("Resend OTP error:", error);
+    return response.status(500).json({ message: "Failed to resend OTP" });
+  }
+});
 
-    app.post("/send-registration-otp", async (req, res) => {
+app.post("/send-registration-otp", async (req, res) => {
       try {
         const { email } = req.body;
 
@@ -710,19 +716,19 @@ app.post("/mentor-login", async (request, response) => {
           otp: generatedOtp
         });
 
-      } catch (err) {
+  } catch (err) {
 
-        console.error(err);
+    console.error(err);
 
-        return res.status(500).json({
-          success: false,
-          message: "Email sending failed"
-        });
-
-      }
+    return res.status(500).json({
+      success: false,
+      message: "Email sending failed"
     });
 
-    app.post("/check-student-exists", async (request, response) => {
+  }
+});
+
+app.post("/check-student-exists", async (request, response) => {
       try {
         const { email, universityPRN, contact } = request.body;
 
@@ -735,12 +741,12 @@ app.post("/mentor-login", async (request, response) => {
         }
 
         return response.status(200).json({ message: "User does not exist" });
-      } catch (error) {
-        return response.status(500).json({ message: "Error checking user" });
-      }
-    });
+  } catch (error) {
+    return response.status(500).json({ message: "Error checking user" });
+  }
+});
 
-    app.post("/student-registration", studentImageUpload.single("studentPhoto"), async (request, response) => {
+app.post("/student-registration", studentImageUpload.single("studentPhoto"), async (request, response) => {
       try {
         const getBodyField = (fieldName) => {
           const requestBody = request.body || {};
@@ -814,16 +820,16 @@ app.post("/mentor-login", async (request, response) => {
         await newStudent.save();
 
         return response.status(201).json({ message: "Student registration successful! ✅" });
-      } catch (error) {
-        console.error("Student registration error:", error);
-        if (error.code === 11000) {
-          return response.status(409).json({ message: "User Exists" });
-        }
-        return response.status(500).json({ message: "Student registration failed." });
-      }
-    });
+  } catch (error) {
+    console.error("Student registration error:", error);
+    if (error.code === 11000) {
+      return response.status(409).json({ message: "User Exists" });
+    }
+    return response.status(500).json({ message: "Student registration failed." });
+  }
+});
 
-    app.get("/student-photo/:id", async (request, response) => {
+app.get("/student-photo/:id", async (request, response) => {
       try {
         const student = await Student.findById(request.params.id).select("studentPhoto");
         if (!student?.studentPhoto?.data) {
@@ -832,12 +838,12 @@ app.post("/mentor-login", async (request, response) => {
 
         response.set("Content-Type", student.studentPhoto.contentType || "image/jpeg");
         return response.send(student.studentPhoto.data);
-      } catch (error) {
-        return response.status(500).json({ message: "Photo fetch failed." });
-      }
-    });
+  } catch (error) {
+    return response.status(500).json({ message: "Photo fetch failed." });
+  }
+});
 
-    app.post("/mentor-registration", studentImageUpload.fields([{ name: 'profilePhoto', maxCount: 1 }, { name: 'paymentQR', maxCount: 1 }]), async (request, response) => {
+app.post("/mentor-registration", studentImageUpload.fields([{ name: 'profilePhoto', maxCount: 1 }, { name: 'paymentQR', maxCount: 1 }]), async (request, response) => {
       try {
         const getBodyField = (fieldName) => {
           const requestBody = request.body || {};
@@ -935,22 +941,22 @@ app.post("/mentor-login", async (request, response) => {
           mentorId: newMentor._id,
           photoUrl: `${BASE_URL}/mentor-photo/${newMentor._id}`
         });
-      } catch (error) {
-        console.error("Mentor registration error:", error);
+  } catch (error) {
+    console.error("Mentor registration error:", error);
 
-        if (error.code === 11000) {
-          return response.status(409).json({ message: "User Exists" });
-        }
+    if (error.code === 11000) {
+      return response.status(409).json({ message: "User Exists" });
+    }
 
-        if (error.message === "Only image files are allowed") {
-          return response.status(400).json({ message: "Please upload image files only." });
-        }
+    if (error.message === "Only image files are allowed") {
+      return response.status(400).json({ message: "Please upload image files only." });
+    }
 
-        return response.status(500).json({ message: "Mentor registration failed." });
-      }
-    });
+    return response.status(500).json({ message: "Mentor registration failed." });
+  }
+});
 
-    app.get("/mentor-photo/:id", async (request, response) => {
+app.get("/mentor-photo/:id", async (request, response) => {
       try {
         const mentor = await Mentor.findById(request.params.id).select("profilePhoto");
         if (!mentor?.profilePhoto?.data) {
@@ -959,12 +965,12 @@ app.post("/mentor-login", async (request, response) => {
 
         response.set("Content-Type", mentor.profilePhoto.contentType || "image/jpeg");
         return response.send(mentor.profilePhoto.data);
-      } catch (error) {
-        return response.status(500).json({ message: "Photo fetch failed." });
-      }
-    });
+  } catch (error) {
+    return response.status(500).json({ message: "Photo fetch failed." });
+  }
+});
 
-    app.get("/mentor-qr/:id", async (request, response) => {
+app.get("/mentor-qr/:id", async (request, response) => {
       try {
         const mentor = await Mentor.findById(request.params.id).select("paymentQR");
         if (!mentor?.paymentQR?.data) {
@@ -973,12 +979,12 @@ app.post("/mentor-login", async (request, response) => {
 
         response.set("Content-Type", mentor.paymentQR.contentType || "image/jpeg");
         return response.send(mentor.paymentQR.data);
-      } catch (error) {
-        return response.status(500).json({ message: "QR fetch fail" });
-      }
-    });
+  } catch (error) {
+    return response.status(500).json({ message: "QR fetch fail" });
+  }
+});
 
-    app.get("/mentor-records", async (_request, response) => {
+app.get("/mentor-records", async (_request, response) => {
       try {
         const mentors = await Mentor.find({}, { profilePhoto: 0, paymentQR: 0 }).sort({ submittedAt: -1 });
         const mentorsWithPhotoUrl = mentors.map((mentor) => ({
@@ -988,12 +994,12 @@ app.post("/mentor-login", async (request, response) => {
         }));
 
         return response.json({ data: mentorsWithPhotoUrl });
-      } catch (error) {
-        return response.status(500).json({ message: "Mentor records fetch failed." });
-      }
-    });
+  } catch (error) {
+    return response.status(500).json({ message: "Mentor records fetch failed." });
+  }
+});
 
-    app.get("/mentor-record/:id", async (request, response) => {
+app.get("/mentor-record/:id", async (request, response) => {
       try {
         const mentor = await Mentor.findById(request.params.id, { profilePhoto: 0 });
 
@@ -1007,12 +1013,12 @@ app.post("/mentor-login", async (request, response) => {
             photoUrl: `${BASE_URL}/mentor-photo/${mentor._id.toString()}`
           }
         });
-      } catch (error) {
-        return response.status(500).json({ message: "Mentor record fetch failed." });
-      }
-    });
+  } catch (error) {
+    return response.status(500).json({ message: "Mentor record fetch failed." });
+  }
+});
 
-    app.get("/student-record/:id", async (request, response) => {
+app.get("/student-record/:id", async (request, response) => {
       const studentId = request.params.id;
       if (!mongoose.Types.ObjectId.isValid(studentId)) {
         return response.status(400).json({ message: "Invalid student id format." });
@@ -1032,13 +1038,13 @@ app.post("/mentor-login", async (request, response) => {
             photoUrl: `${BASE_URL}/student-photo/${student._id.toString()}`
           }
         });
-      } catch (error) {
-        console.error("Student record fetch error:", error);
-        return response.status(500).json({ message: "Student record fetch failed." });
-      }
-    });
+  } catch (error) {
+    console.error("Student record fetch error:", error);
+    return response.status(500).json({ message: "Student record fetch failed." });
+  }
+});
 
-    app.patch("/student-main-login", async (request, response) => {
+app.patch("/student-main-login", async (request, response) => {
       try {
         const { email, username, password } = request.body;
 
@@ -1074,13 +1080,13 @@ app.post("/mentor-login", async (request, response) => {
         }
 
         return response.json({ message: "Student login details updated successfully!" });
-      } catch (error) {
-        console.error("Student main login error:", error);
-        return response.status(500).json({ message: "Failed to update student main login" });
-      }
-    });
+  } catch (error) {
+    console.error("Student main login error:", error);
+    return response.status(500).json({ message: "Failed to update student main login" });
+  }
+});
 
-    app.post("/create-zoom-meeting", async (req, res) => {
+app.post("/create-zoom-meeting", async (req, res) => {
       try {
         const { studentId, mentorId, studentName, mentorName } = req.body;
 
@@ -1186,40 +1192,40 @@ app.post("/mentor-login", async (request, response) => {
         }
 
         res.json({ joinUrl: meetingData.join_url, startUrl: meetingData.start_url });
-      } catch (error) {
-        console.error("Zoom meeting creation error:", error);
-        res.status(500).json({ error: error.message });
-      }
-    });
+  } catch (error) {
+    console.error("Zoom meeting creation error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
-    app.get("/mentor-sessions/:mentorId", async (req, res) => {
+app.get("/mentor-sessions/:mentorId", async (req, res) => {
       try {
         const sessions = await Session.find({ mentorId: req.params.mentorId }).sort({ createdAt: -1 });
         res.json({ data: sessions });
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-    app.get("/student-sessions/:studentId", async (req, res) => {
+app.get("/student-sessions/:studentId", async (req, res) => {
       try {
         const sessions = await Session.find({ studentId: req.params.studentId }).sort({ createdAt: -1 });
         res.json({ data: sessions });
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-    app.get("/all-sessions", async (req, res) => {
+app.get("/all-sessions", async (req, res) => {
       try {
         const sessions = await Session.find({}, { "paymentProof.data": 0 }).sort({ createdAt: -1 });
         res.json({ data: sessions });
-      } catch (err) {
-        res.status(500).json({ message: "Error fetching all sessions" });
-      }
-    });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching all sessions" });
+  }
+});
 
-    app.post("/admin-pay-mentor/:sessionId", studentImageUpload.single("paymentProof"), async (req, res) => {
+app.post("/admin-pay-mentor/:sessionId", studentImageUpload.single("paymentProof"), async (req, res) => {
       try {
         const { sessionId } = req.params;
         if (!req.file) {
@@ -1243,13 +1249,13 @@ app.post("/mentor-login", async (request, response) => {
         }
 
         res.json({ message: "Payment recorded successfully", session: updatedSession });
-      } catch (err) {
-        console.error("Admin pay mentor error:", err);
-        res.status(500).json({ message: "Internal server error" });
-      }
-    });
+  } catch (err) {
+    console.error("Admin pay mentor error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
-    app.get("/mentor-payment-proof/:sessionId", async (req, res) => {
+app.get("/mentor-payment-proof/:sessionId", async (req, res) => {
       try {
         const session = await Session.findById(req.params.sessionId).select("paymentProof");
         if (!session?.paymentProof?.data) {
@@ -1257,14 +1263,14 @@ app.post("/mentor-login", async (request, response) => {
         }
         res.set("Content-Type", session.paymentProof.contentType);
         res.send(session.paymentProof.data);
-      } catch (err) {
-        res.status(500).json({ message: "Error fetching payment proof" });
-      }
-    });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching payment proof" });
+  }
+});
 
 
 
-    app.patch("/mentor-main-login/:id", async (request, response) => {
+app.patch("/mentor-main-login/:id", async (request, response) => {
       try {
         const mentorId = request.params.id;
         const mentorUsername = request.body?.mentorUsername?.trim();
@@ -1309,12 +1315,12 @@ app.post("/mentor-login", async (request, response) => {
             photoUrl: `${BASE_URL}/mentor-photo/${updatedMentor._id}`
           }
         });
-      } catch (error) {
-        return response.status(500).json({ message: "Failed to save mentor login details." });
-      }
-    });
+  } catch (error) {
+    return response.status(500).json({ message: "Failed to save mentor login details." });
+  }
+});
 
-    app.delete("/mentor-record/:id", async (request, response) => {
+app.delete("/mentor-record/:id", async (request, response) => {
       try {
         const mentorId = String(request.params.id || "").trim();
 
@@ -1328,14 +1334,14 @@ app.post("/mentor-login", async (request, response) => {
         }
 
         return response.json({ message: "Deleted Successfully" });
-      } catch (error) {
-        return response.status(500).json({ message: "Mentor deletion failed." });
-      }
-    });
+  } catch (error) {
+    return response.status(500).json({ message: "Mentor deletion failed." });
+  }
+});
 
 
 
-    app.post("/admin-login", async (request, response) => {
+app.post("/admin-login", async (request, response) => {
       console.log("Hit /admin-login endpoint:", request.body);
       try {
         const { AdminUsername, AdminPassword } = request.body;
@@ -1394,13 +1400,13 @@ app.post("/mentor-login", async (request, response) => {
           adminEmail: admin.AdminEmail,
           otp: generatedOtp
         });
-      } catch (error) {
-        console.error("Admin login error:", error);
-        return response.status(500).json({ message: "Admin Login failed." });
-      }
-    });
+  } catch (error) {
+    console.error("Admin login error:", error);
+    return response.status(500).json({ message: "Admin Login failed." });
+  }
+});
 
-    app.post("/admin-otp-resend", async (request, response) => {
+app.post("/admin-otp-resend", async (request, response) => {
       try {
         const { adminEmail } = request.body;
         if (!adminEmail) {
@@ -1427,15 +1433,15 @@ app.post("/mentor-login", async (request, response) => {
   `
         );
         return response.json({ message: "OTP sent successfully", otp: generatedOtp });
-      } catch (error) {
-        console.error("Admin OTP resend error:", error);
-        return response.status(500).json({ message: "Failed to send OTP." });
-      }
-    });
+  } catch (error) {
+    console.error("Admin OTP resend error:", error);
+    return response.status(500).json({ message: "Failed to send OTP." });
+  }
+});
 
-    // --- Booking & Availability Routes ---
+// --- Booking & Availability Routes ---
 
-    app.post("/booking-request", async (req, res) => {
+app.post("/booking-request", async (req, res) => {
       try {
         const { studentId, mentorId, studentName, studentPhotoUrl, studentEmail, studentCourse, studentYear } = req.body;
         if (!studentId || !mentorId) {
@@ -1523,33 +1529,33 @@ app.post("/mentor-login", async (request, response) => {
           console.error("BREVO ERROR:", mailError);
         }
         res.status(201).json({ message: "Request sent and email notified!", data: targetBooking });
-      } catch (error) {
-        console.error("Booking request error details:", error);
-        res.status(500).json({ message: "Failed to send request: " + error.message });
-      }
-    });
+  } catch (error) {
+    console.error("Booking request error details:", error);
+    res.status(500).json({ message: "Failed to send request: " + error.message });
+  }
+});
 
-    app.get("/booking-requests/:mentorId", async (req, res) => {
+app.get("/booking-requests/:mentorId", async (req, res) => {
       try {
         const requests = await Booking.find({ mentorId: req.params.mentorId, status: 'Pending' });
         res.json({ data: requests });
-      } catch (error) {
-        res.status(500).json({ message: "Failed to fetch requests" });
-      }
-    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch requests" });
+  }
+});
 
-    app.patch("/booking-request/:id", async (req, res) => {
+app.patch("/booking-request/:id", async (req, res) => {
       try {
         const { status } = req.body;
         const updated = await Booking.findByIdAndUpdate(req.params.id, { status }, { new: true });
         if (!updated) return res.status(404).json({ message: "Request not found" });
         res.json({ message: "Status updated", data: updated });
-      } catch (error) {
-        res.status(500).json({ message: "Failed to update status" });
-      }
-    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update status" });
+  }
+});
 
-    app.get("/booking-status/:studentId/:mentorId", async (req, res) => {
+app.get("/booking-status/:studentId/:mentorId", async (req, res) => {
       try {
         const { studentId, mentorId } = req.params;
         // Only return requests from the last 2 hours to avoid "skipping" the availability step due to old records
@@ -1560,12 +1566,12 @@ app.post("/mentor-login", async (request, response) => {
           requestedAt: { $gte: twoHoursAgo }
         }).sort({ requestedAt: -1 });
         res.json({ data: booking });
-      } catch (error) {
-        res.status(500).json({ message: "Failed to fetch status" });
-      }
-    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch status" });
+  }
+});
 
-    app.delete("/booking-request/:studentId/:mentorId", async (req, res) => {
+app.delete("/booking-request/:studentId/:mentorId", async (req, res) => {
       const { studentId, mentorId } = req.params;
       console.log(`Clearing requests for Student: ${studentId}, Mentor: ${mentorId}`);
       try {
@@ -1573,14 +1579,14 @@ app.post("/mentor-login", async (request, response) => {
         const result = await Booking.deleteMany({ studentId, mentorId });
         if (result.deletedCount === 0) return res.status(404).json({ message: "No requests found to clear" });
         res.json({ message: "All requests cleared successfully" });
-      } catch (error) {
-        res.status(500).json({ message: "Failed to clear requests" });
-      }
-    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to clear requests" });
+  }
+});
 
 
 
-    app.patch("/admin/mentor-status/:id", async (request, response) => {
+app.patch("/admin/mentor-status/:id", async (request, response) => {
       try {
         const mentorId = request.params.id;
         const { status } = request.body;
@@ -1611,13 +1617,13 @@ app.post("/mentor-login", async (request, response) => {
             photoUrl: `${BASE_URL}/mentor-photo/${updatedMentor._id}`
           }
         });
-      } catch (error) {
-        console.error("Update mentor status error:", error);
-        return response.status(500).json({ message: "Failed to update mentor status." });
-      }
-    });
+  } catch (error) {
+    console.error("Update mentor status error:", error);
+    return response.status(500).json({ message: "Failed to update mentor status." });
+  }
+});
 
-    app.post("/admin/mentor-logout/:id", async (request, response) => {
+app.post("/admin/mentor-logout/:id", async (request, response) => {
       try {
         const mentorId = request.params.id;
         if (!mongoose.Types.ObjectId.isValid(mentorId)) {
@@ -1628,13 +1634,13 @@ app.post("/mentor-login", async (request, response) => {
           return response.status(404).json({ message: "Mentor not found" });
         }
         return response.json({ message: "Mentor logged out and record deleted." });
-      } catch (error) {
-        console.error("Mentor logout error:", error);
-        return response.status(500).json({ message: "Failed to logout mentor." });
-      }
-    });
+  } catch (error) {
+    console.error("Mentor logout error:", error);
+    return response.status(500).json({ message: "Failed to logout mentor." });
+  }
+});
 
-    app.post("/admin/mentor-block/:id", async (request, response) => {
+app.post("/admin/mentor-block/:id", async (request, response) => {
       try {
         const mentorId = request.params.id;
         if (!mongoose.Types.ObjectId.isValid(mentorId)) {
@@ -1657,13 +1663,13 @@ app.post("/mentor-login", async (request, response) => {
         await Report.deleteMany({ mentorName: mentor.fullName });
 
         return response.json({ message: "Mentor blocked and record moved to Block_Record." });
-      } catch (error) {
-        console.error("Mentor block error:", error);
-        return response.status(500).json({ message: "Failed to block mentor." });
-      }
-    });
+  } catch (error) {
+    console.error("Mentor block error:", error);
+    return response.status(500).json({ message: "Failed to block mentor." });
+  }
+});
 
-    app.post("/mentor-feedback-record", async (request, response) => {
+app.post("/mentor-feedback-record", async (request, response) => {
       try {
         const userId = String(request.body?.userId || "").trim();
         const fullName = String(request.body?.fullName || "").trim();
@@ -1682,13 +1688,13 @@ app.post("/mentor-login", async (request, response) => {
         });
         await newFeedbackRecord.save();
         return response.status(201).json({ message: "Feedback saved successfully." });
-      } catch (error) {
-        console.error("Feedback save failed:", error);
-        return response.status(500).json({ message: "Failed to save feedback record." });
-      }
-    });
+  } catch (error) {
+    console.error("Feedback save failed:", error);
+    return response.status(500).json({ message: "Failed to save feedback record." });
+  }
+});
 
-    app.post("/developer-registration", async (request, response) => {
+app.post("/developer-registration", async (request, response) => {
       try {
         const { fullName, email, password, securityKey } = request.body;
         if (!fullName || !email || !password || !securityKey) {
@@ -1712,13 +1718,13 @@ app.post("/mentor-login", async (request, response) => {
         });
         await newDeveloper.save();
         return response.status(201).json({ message: "Developer Account Created Successfully!" });
-      } catch (error) {
-        console.error("Developer registration error:", error);
-        return response.status(500).json({ message: "Failed to create developer account." });
-      }
-    });
+  } catch (error) {
+    console.error("Developer registration error:", error);
+    return response.status(500).json({ message: "Failed to create developer account." });
+  }
+});
 
-    app.post("/developer-forgot-otp", async (request, response) => {
+app.post("/developer-forgot-otp", async (request, response) => {
       try {
         // Fetch the primary developer record
         const developer = await DeveloperRecord.findOne({});
@@ -1745,13 +1751,13 @@ app.post("/mentor-login", async (request, response) => {
           otp: generatedOtp,
         });
 
-      } catch (error) {
-        console.error("Developer Forgot OTP Error:", error);
-        return response.status(500).json({ message: "Failed to send OTP." });
-      }
-    });
+  } catch (error) {
+    console.error("Developer Forgot OTP Error:", error);
+    return response.status(500).json({ message: "Failed to send OTP." });
+  }
+});
 
-    app.post("/verify-security-key", async (request, response) => {
+app.post("/verify-security-key", async (request, response) => {
       try {
         const { securityKey, otp, expectedOtp } = request.body;
 
@@ -1780,13 +1786,13 @@ app.post("/mentor-login", async (request, response) => {
           }
           return response.status(401).json({ message: errorMessage });
         }
-      } catch (error) {
-        console.error("Security key verification error:", error);
-        return response.status(500).json({ message: "Verification process failed." });
-      }
-    });
+  } catch (error) {
+    console.error("Security key verification error:", error);
+    return response.status(500).json({ message: "Verification process failed." });
+  }
+});
 
-    app.post("/developer-login", async (request, response) => {
+app.post("/developer-login", async (request, response) => {
       try {
         const { fullName, email, password } = request.body;
         if (!fullName || !email || !password) {
@@ -1849,13 +1855,13 @@ app.post("/mentor-login", async (request, response) => {
           email: developer.email,
           otp: generatedOtp
         });
-      } catch (error) {
-        console.error("Developer login error:", error);
-        return response.status(500).json({ message: "Login process failed" });
-      }
-    });
+  } catch (error) {
+    console.error("Developer login error:", error);
+    return response.status(500).json({ message: "Login process failed" });
+  }
+});
 
-    app.post("/submit-report", studentImageUpload.single("mentorImage"), async (request, response) => {
+app.post("/submit-report", studentImageUpload.single("mentorImage"), async (request, response) => {
       try {
         const { mentorName, issue } = request.body;
 
@@ -1877,13 +1883,13 @@ app.post("/mentor-login", async (request, response) => {
 
         await newReport.save();
         return response.status(201).json({ message: "Report submitted successfully!" });
-      } catch (error) {
-        console.error("Submit report error:", error);
-        return response.status(500).json({ message: "Failed to submit report." });
-      }
-    });
+  } catch (error) {
+    console.error("Submit report error:", error);
+    return response.status(500).json({ message: "Failed to submit report." });
+  }
+});
 
-    app.get("/get-reports", async (_request, response) => {
+app.get("/get-reports", async (_request, response) => {
       try {
         // Exclude only the heavy image data, but keep the metadata (like contentType) to know if a photo exists
         const reports = await Report.find({}, { "reportPhoto.data": 0 }).sort({ submittedAt: -1 });
@@ -1900,13 +1906,13 @@ app.post("/mentor-login", async (request, response) => {
         });
 
         return response.json({ data: reportsWithPhotoUrl });
-      } catch (error) {
-        console.error("Fetch reports error:", error);
-        return response.status(500).json({ message: "Failed to fetch reports." });
-      }
-    });
+  } catch (error) {
+    console.error("Fetch reports error:", error);
+    return response.status(500).json({ message: "Failed to fetch reports." });
+  }
+});
 
-    app.delete("/admin/report/:id", async (request, response) => {
+app.delete("/admin/report/:id", async (request, response) => {
       try {
         const reportId = request.params.id;
         if (!mongoose.Types.ObjectId.isValid(reportId)) {
@@ -1917,13 +1923,13 @@ app.post("/mentor-login", async (request, response) => {
           return response.status(404).json({ message: "Report not found" });
         }
         return response.json({ message: "Report deleted successfully" });
-      } catch (error) {
-        console.error("Delete report error:", error);
-        return response.status(500).json({ message: "Failed to delete report" });
-      }
-    });
+  } catch (error) {
+    console.error("Delete report error:", error);
+    return response.status(500).json({ message: "Failed to delete report" });
+  }
+});
 
-    app.get("/report-photo/:id", async (request, response) => {
+app.get("/report-photo/:id", async (request, response) => {
       try {
         const report = await Report.findById(request.params.id).select("reportPhoto");
         if (!report?.reportPhoto?.data) {
@@ -1931,13 +1937,13 @@ app.post("/mentor-login", async (request, response) => {
         }
         response.set("Content-Type", report.reportPhoto.contentType || "image/jpeg");
         return response.send(report.reportPhoto.data);
-      } catch (error) {
-        return response.status(500).json({ message: "Photo fetch fail" });
-      }
-    });
+  } catch (error) {
+    return response.status(500).json({ message: "Photo fetch fail" });
+  }
+});
 
-    // --- Forgot Password: Send OTP to Mentor ---
-    app.post("/forgot-mentor-password", async (request, response) => {
+// --- Forgot Password: Send OTP to Mentor ---
+app.post("/forgot-mentor-password", async (request, response) => {
       try {
         const { email } = request.body;
         if (!email) return response.status(400).json({ message: "Email is required" });
@@ -1967,9 +1973,15 @@ app.post("/mentor-login", async (request, response) => {
           otp,
           mentorId: mentor._id.toString()
         });
+      } catch (error) {
+        console.error("Forgot mentor password error:", error);
+        return response.status(500).json({ message: "Server error" });
+      }
+});
+// FIXED: Closed /forgot-mentor-password route here (was missing }); before next app.post)
 
-        // --- Reset Mentor Password ---
-        app.post("/reset-mentor-password", async (request, response) => {
+// --- Reset Mentor Password ---
+app.post("/reset-mentor-password", async (request, response) => {
           try {
             const { mentorId, newPassword } = request.body;
             if (!mentorId || !newPassword) return response.status(400).json({ message: "Mentor ID and new password are required" });
@@ -1979,14 +1991,14 @@ app.post("/mentor-login", async (request, response) => {
             if (!updated) return response.status(404).json({ message: "Mentor not found" });
 
             return response.json({ message: "Password updated successfully" });
-          } catch (error) {
-            console.error("Reset mentor password error:", error);
-            return response.status(500).json({ message: "Server error" });
-          }
-        });
+  } catch (error) {
+    console.error("Reset mentor password error:", error);
+    return response.status(500).json({ message: "Server error" });
+  }
+});
 
-        // --- Forgot Password: Send OTP to Student ---
-        app.post("/forgot-student-password", async (request, response) => {
+// --- Forgot Password: Send OTP to Student ---
+app.post("/forgot-student-password", async (request, response) => {
           try {
             const { email } = request.body;
             if (!email) return response.status(400).json({ message: "Email is required" });
@@ -2011,14 +2023,14 @@ app.post("/mentor-login", async (request, response) => {
   `
             );
             return response.json({ message: "OTP sent to your registered email", otp, studentId: student._id.toString() });
-          } catch (error) {
-            console.error("Forgot student password error:", error);
-            return response.status(500).json({ message: "Server error" });
-          }
-        });
+  } catch (error) {
+    console.error("Forgot student password error:", error);
+    return response.status(500).json({ message: "Server error" });
+  }
+});
 
-        // --- Reset Student Password ---
-        app.post("/reset-student-password", async (request, response) => {
+// --- Reset Student Password ---
+app.post("/reset-student-password", async (request, response) => {
           try {
             const { studentId, newPassword } = request.body;
             if (!studentId || !newPassword) return response.status(400).json({ message: "Student ID and new password are required" });
@@ -2028,14 +2040,14 @@ app.post("/mentor-login", async (request, response) => {
             if (!updated) return response.status(404).json({ message: "Student not found" });
 
             return response.json({ message: "Password updated successfully" });
-          } catch (error) {
-            console.error("Reset student password error:", error);
-            return response.status(500).json({ message: "Server error" });
-          }
-        });
+  } catch (error) {
+    console.error("Reset student password error:", error);
+    return response.status(500).json({ message: "Server error" });
+  }
+});
 
-        // --- Forgot Password: Send OTP to Admin ---
-        app.post("/forgot-admin-password", async (request, response) => {
+// --- Forgot Password: Send OTP to Admin ---
+app.post("/forgot-admin-password", async (request, response) => {
           try {
             const { email } = request.body;
             if (!email) return response.status(400).json({ message: "Email is required" });
@@ -2065,9 +2077,15 @@ app.post("/mentor-login", async (request, response) => {
               otp,
               adminId: admin._id.toString()
             });
+          } catch (error) {
+            console.error("Forgot admin password error:", error);
+            return response.status(500).json({ message: "Server error" });
+          }
+});
+// FIXED: Closed /forgot-admin-password route here (was missing }); before next app.post)
 
-            // --- Reset Admin Password ---
-            app.post("/reset-admin-password", async (request, response) => {
+// --- Reset Admin Password ---
+app.post("/reset-admin-password", async (request, response) => {
               try {
                 const { adminId, newPassword } = request.body;
                 if (!adminId || !newPassword) return response.status(400).json({ message: "Admin ID and new password are required" });
@@ -2077,14 +2095,14 @@ app.post("/mentor-login", async (request, response) => {
                 if (!updated) return response.status(404).json({ message: "Admin not found" });
 
                 return response.json({ message: "Password updated successfully" });
-              } catch (error) {
-                console.error("Reset admin password error:", error);
-                return response.status(500).json({ message: "Server error" });
-              }
-            });
+  } catch (error) {
+    console.error("Reset admin password error:", error);
+    return response.status(500).json({ message: "Server error" });
+  }
+});
 
-            // --- Forgot Password: Send OTP to Developer ---
-            app.post("/forgot-dev-password", async (request, response) => {
+// --- Forgot Password: Send OTP to Developer ---
+app.post("/forgot-dev-password", async (request, response) => {
               try {
                 const { email } = request.body;
                 if (!email) return response.status(400).json({ message: "Email is required" });
@@ -2121,9 +2139,15 @@ app.post("/mentor-login", async (request, response) => {
                   otp,
                   devId: developer._id.toString()
                 });
+              } catch (error) {
+                console.error("Forgot dev password error:", error);
+                return response.status(500).json({ message: "Server error" });
+              }
+});
+// FIXED: Closed /forgot-dev-password route here (was missing }); before next app.post)
 
-                // --- Reset Developer Password ---
-                app.post("/reset-dev-password", async (request, response) => {
+// --- Reset Developer Password ---
+app.post("/reset-dev-password", async (request, response) => {
                   try {
                     const { devId, newPassword } = request.body;
                     if (!devId || !newPassword) return response.status(400).json({ message: "Dev ID and new password are required" });
@@ -2133,32 +2157,32 @@ app.post("/mentor-login", async (request, response) => {
                     if (!updated) return response.status(404).json({ message: "Developer not found" });
 
                     return response.json({ message: "Password updated successfully" });
-                  } catch (error) {
-                    console.error("Reset dev password error:", error);
-                    return response.status(500).json({ message: "Server error" });
-                  }
-                });
+  } catch (error) {
+    console.error("Reset dev password error:", error);
+    return response.status(500).json({ message: "Server error" });
+  }
+});
 
-                // --- Serve Vite Frontend Build (Production) ---
-                const frontendDist = path.join(__dirname, "..", "frontend", "dist");
-
-
-                console.log("==================================");
-                console.log("__dirname:", __dirname);
-                console.log("frontendDist:", frontendDist);
-                console.log("Dist Exists:", fs.existsSync(frontendDist));
-                console.log("==================================");
+// --- Serve Vite Frontend Build (Production) ---
+const frontendDist = path.join(__dirname, "..", "frontend", "dist");
 
 
-                if (fs.existsSync(frontendDist)) {
-                  app.use(express.static(frontendDist));
+console.log("==================================");
+console.log("__dirname:", __dirname);
+console.log("frontendDist:", frontendDist);
+console.log("Dist Exists:", fs.existsSync(frontendDist));
+console.log("==================================");
 
-                  // Catch-all: for any route not matched by an API, serve the frontend's index.html
-                  app.get("*", (_req, res) => {
-                    res.sendFile(path.join(frontendDist, "index.html"));
-                  });
-                }
 
-                app.listen(PORT, () => {
-                  console.log(`Server running on port ${PORT}`);
-                });
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+
+  // Catch-all: for any route not matched by an API, serve the frontend's index.html
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(frontendDist, "index.html"));
+  });
+}
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
